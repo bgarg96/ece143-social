@@ -138,6 +138,21 @@ class Social:
         return top
 
 
+    def get_topn_influencers_categorical(self,criteria,metric,N=1):
+        '''
+        Pass a criteria(category) and get info of top influencers in each subcategory
+        '''
+        products= self.get_category_items(criteria)
+
+        for i,product in enumerate(products):
+            if(i==0):
+                filtered_df=self.find_topn_influencers(self.get_subcategory_items(self.df,criteria,product),1)[metric]
+            else:
+                filtered_df=pd.concat([filtered_df,self.find_topn_influencers(self.get_subcategory_items(self.df,criteria,product),1)[metric]],axis=0)
+
+        return filtered_df
+
+
     #helper functions
     def value_to_float(self,x):
         if type(x) == float or type(x) == int:
