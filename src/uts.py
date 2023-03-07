@@ -2,14 +2,13 @@ from typing import List, Optional
 
 import pandas as pd
 
-from config import MONTHS
+from config import MONTHS, PRIMARY_KEY
 
 
 def weighted_average(df: pd.DataFrame,
                      var: str,
                      decay_factor: Optional[float] = 0.9,
                      order_by: Optional[str] = 'Month') -> pd.DataFrame:
-    global PRIMARY_KEY
     df_listed: dict = df.sort_values([PRIMARY_KEY, order_by]).groupby(
         PRIMARY_KEY).agg(({var: list, order_by: list}))\
         .reset_index()\
@@ -37,4 +36,3 @@ def _weighted_average_helper(var_list: List[float],
             (imputes[mnth] if mnth in imputes else list_average)
 
     return avg
-

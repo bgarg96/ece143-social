@@ -1,10 +1,11 @@
 from collections import Counter
 from pathlib import Path
+from typing import Set
 
 import numpy as np
 import pandas as pd
 
-from config import MONTHS, MONTHS_DTYPE, PRIMARY_KEY, NUMERIC_COLUMNS, NAME
+from config import MONTHS, MONTHS_DTYPE, NAME, NUMERIC_COLUMNS, PRIMARY_KEY
 from uts import weighted_average
 
 
@@ -15,7 +16,7 @@ class Social:
         initialize instance of platform
         '''
         # list of filter categories
-        self.metrics = []
+        self.metrics: Set[str] = set()
         # TODO(PRASAD): approve these calls
         self.df = self.load_dfs(platform)
         self.poularity = weighted_average(self.df, 'Subscribers')
@@ -31,15 +32,15 @@ class Social:
         clean up dataframe
         '''
         # remove nan
-        df.fillna('other',axis=0, inplace=True)
+        df.fillna('other', axis=0, inplace=True)
 
         # converts string numerics to floats
         for column in df.columns:
             if column in NUMERIC_COLUMNS:
                 df[column] = df[column].apply(
                     self.value_to_float)
-                self.metrics.append(column)
-        
+                self.metrics.add(column)
+
         return df
 
     def load_dfs(self, media: str) -> pd.DataFrame:
@@ -48,8 +49,9 @@ class Social:
         ).parent.parent / 'data' / media
         dfs = {str: pd.DataFrame}
         for mnth in MONTHS:
-            dfs[mnth] = self.preprocess_frame(pd.read_csv(dir_path / f"{media}_{mnth}.csv",
-                                    encoding='utf-8'))
+            dfs[mnth] = self.preprocess_frame(
+                pd.read_csv(dir_path / f"{media}_{mnth}.csv",
+                            encoding='utf-8'))
             dfs[mnth]['Month'] = mnth
             # drop duplicate columns
             dfs[mnth] = dfs[mnth].drop_duplicates(subset=[PRIMARY_KEY])
@@ -66,7 +68,6 @@ class Social:
         '''
         return list(df[NAME])
 
-
     def get_category_items(self, category):
         '''
         gets items pertaining to a category
@@ -77,7 +78,7 @@ class Social:
         df (type: pd.dataframe) : output data frame column
         '''
 
-        assert(category in self.categories), "inavlid category"
+        assert(category in self.get_categories()), "inavlid category"
         assert(isinstance(self.df, pd.DataFrame)), "inavlid dataframe"
 
         # remove nans
@@ -90,7 +91,6 @@ class Social:
         subcategories = Counter(subcategories)
 
         return list(subcategories.keys())
-
 
     def get_subcategory_items(self, df, category, subcategory):
         '''
