@@ -10,9 +10,15 @@ class Social:
         '''
         initialize instance of platform
         '''
+        assert(isinstance(path,str)),"not a valid path"
+        # list of numeric column
+        self.numerics=('Likes', 'Comments', 'Views', 'Subscribers',  'Shares', 'AuthenticEngagement', 'EngagementAverage')
+        # list of filter categories
+        self.filters=('Country','Category_1')
         assert(isinstance(path, str)), "invalid file path "
         self.read_to_dataframe(path)
         self.preprocess_frame()
+        
 
     def get_categories(self):
         '''
@@ -26,21 +32,17 @@ class Social:
         '''
         self.metrics = []
         # remove nan
-        self.df.dropna(0, inplace=True)
+        self.df.fillna('other',axis=0, inplace=True)
 
         # get attributes in csv
         headings = self.df.head(0)
         headings = (list(headings.columns))
-        data = list(self.df.iloc[1, :])
-
-        # convert numeric suffixes to numeric
-        for i, dat in enumerate(data):
-            if(isinstance(dat, str) and dat[0].isnumeric()):
-                if(dat.lower().endswith('m') or dat.lower().endswith('b')
-                        or dat.lower().endswith('k')):
-                    self.df[headings[i]] = self.df[headings[i]].apply(
-                        self.value_to_float)
-                    self.metrics.append(headings[i])
+        # converts string numerics to floats
+        for i,heading in enumerate(headings):
+            if(heading in self.numerics):
+                self.df[headings[i]] = self.df[headings[i]].apply(
+                    self.value_to_float)
+                self.metrics.append(headings[i])
 
         # drop duplicate columns
         self.df.drop_duplicates(
