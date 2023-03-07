@@ -1,0 +1,6 @@
+points for presentation
+
+-proper software engineering process - requirements ->HLD ->LLD
+-proper responsibility matrix 
+-compare trends for users ( growth/popularity based on subscriber engagement)
+- 

@@ -2,6 +2,14 @@ import platforms as pt
 import streamlit as st
 import pandas as pd
 
+
+'''
+This file contains the front end code for visualization on a webpage using Streamlit
+'''
+
+#streamlit configuration#
+
+
 instagram= pt.Social("./data/Instagram/social media influencers - instagram sep-2022.csv")
 st.write("Top 10 influencers")
 st.write(instagram.find_topn_influencers(instagram.df,10)[instagram.metrics[0]])
@@ -26,4 +34,5 @@ option4=  st.selectbox('Select Metric',instagram.metrics)
 subframe=instagram.get_subcategory_items( instagram.df,option1,option2)
 dfs=instagram.find_topn_influencers(subframe,option3)[option4]
 st.write("Top "+str(option3)+" influencers for "+option2+ " under " +option1+ " based on "+ option4)
+#add your visualization function here
 st.write(dfs)
