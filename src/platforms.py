@@ -76,8 +76,8 @@ class Social:
         df (type: pd.dataframe) : output data frame column
         '''
 
-        assert(category in self.categories),"inavlid category"
-        assert(isinstance(self.df,pd.DataFrame)),"inavlid dataframe"
+        assert(category in self.categories),"invalid category"
+        assert(isinstance(self.df,pd.DataFrame)),"invalid dataframe"
 
         #remove nans
         self.df[category] = self.df[category].replace(np.nan, 'other')

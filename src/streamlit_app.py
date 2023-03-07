@@ -2,7 +2,8 @@ import platforms as pt
 import streamlit as st
 import pandas as pd
 
-instagram= pt.Social("./data/Instagram/social media influencers - instagram sep-2022.csv")
+# instagram= pt.Social("./data/Instagram/social media influencers - instagram sep-2022.csv")
+instagram= pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram sep-2022.csv")
 st.write("Top 10 influencers")
 st.write(instagram.find_topn_influencers(instagram.df,10)[instagram.metrics[0]])
 
