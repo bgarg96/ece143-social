@@ -9,7 +9,6 @@ This file contains the front end code for visualization on a webpage using Strea
 
 #streamlit configuration#
 
-
 instagram= pt.Social("./data/Instagram/social media influencers - instagram sep-2022.csv")
 st.write("Top 10 influencers")
 st.write(instagram.find_topn_influencers(instagram.df,10)[instagram.metrics[0]])
