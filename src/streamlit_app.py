@@ -36,8 +36,11 @@ st.write(filter_product)
 option1 = st.selectbox('Choose category', instagram.filters)
 option2 = st.selectbox('Find top Influencers in these subcategories',
                        instagram.get_category_items(option1))
+
+topn= [1, 3, 5, 10]
+default_topn=topn.index(3)
 option3 = st.selectbox(
-    'Select Number of Influencers to display', (1, 3, 5, 10))
+    'Select Number of Influencers to display',topn,index=default_topn)
 option4 = st.selectbox('Select Metric', instagram.metrics)
 
 # get top influencers across a sub-category based on subsrcibers
