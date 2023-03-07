@@ -1,8 +1,15 @@
 import platforms as pt
 import streamlit as st
 
-instagram = pt.Social(
-    "./data/Instagram/social media influencers - instagram sep-2022.csv")
+
+'''
+This file contains the front end code for visualization on a webpage using Streamlit
+'''
+
+#streamlit configuration#
+
+
+instagram= pt.Social("./data/Instagram/social media influencers - instagram sep-2022.csv")
 st.write("Top 10 influencers")
 st.write(instagram.find_topn_influencers(
     instagram.df, 10)[instagram.metrics[0]])
