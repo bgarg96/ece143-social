@@ -3,25 +3,21 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-'''
-This file contains the front end code for
-visualization on a webpage using Streamlit
-'''
 
 # streamlit configuration#
 
 
 instagram = pt.Social("../data/Youtube/Youtube_Dec.csv")
-st.write("Top 10 influencers")
-st.write(instagram.find_topn_influencers(
-    instagram.df, 10)[instagram.metrics[0]])
+# st.write("Top 10 influencers")
+# st.write(instagram.find_topn_influencers(
+#     instagram.df, 10)[instagram.metrics[0]])
 
-st.write("Top 10 influencers in the US")
-st.write(instagram.find_topn_influencers(instagram.get_subcategory_items(
-    instagram.df,
-    'Country',
-    'United States'),
-    10)[instagram.metrics[0]])
+# st.write("Top 10 influencers in the US")
+# st.write(instagram.find_topn_influencers(instagram.get_subcategory_items(
+#     instagram.df,
+#     'Country',
+#     'United States'),
+#     10)[instagram.metrics[0]])
 
 
 option = st.selectbox(
@@ -37,7 +33,9 @@ option1 = st.selectbox('Choose category', instagram.filters)
 option2 = st.selectbox('Find top Influencers in these subcategories',
                        instagram.get_category_items(option1))
 
+# list of N's for top influencers
 topn= [1, 3, 5, 10]
+# default value of N to be displayed in selection box
 default_topn=topn.index(3)
 option3 = st.selectbox(
     'Select Number of Influencers to display',topn,index=default_topn)
