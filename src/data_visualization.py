@@ -256,8 +256,8 @@ def heatmap(df_instagram, df_youtube, requested_media='Instagram'):
     '''
     display heat map of the number of subscribers and top influencer for each category in each country for given social media platform
     param: 
-    df_top_instagram (type: pd.DataFrame) : non-dated DataFrame of top influencers on instagram data
-    df_top_youtube (type: pd.DataFrame) : non-dated DataFrame of top influencers on youtube data
+    df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
+    df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
     output:
     seaborn heat map
     '''
@@ -270,30 +270,30 @@ def heatmap(df_instagram, df_youtube, requested_media='Instagram'):
         fig_count = 0
         plt.figure(fig_count)
         for platform in platform_options:
-                df_platform = all_dfs[fig_count][['Influencer name', 'Category', 'Audience country', 'Subscribers']]
-                all_categories = df_platform['Category'].unique()
-                all_countries = df_platform['Audience country'].unique()
-                new_df = pd.DataFrame(columns=all_countries, index=all_categories)
-                labels = np.empty([len(all_categories), len(all_countries)])
-                labels[:] = np.nan
-                col = 0
-                for country in all_countries:
-                    df_vals = []
-                    row = 0
-                    for category in all_categories:
-                        df_filtered_country = df_platform.loc[df_platform['Audience country'] == country]
-                        df_filtered_category = df_filtered_country.loc[df_filtered_country['Category'] == category]
-                        highest_following = df_filtered_category.loc[df_filtered_category['Followers'].idxmax()]
-                        df_vals.append(highest_following['Followers'])
-                        labels[row, col] = highest_following['Influencer name']
-                        row += 1
-                    new_df[country] = df_vals
-                    col += 1
-                sns.heatmap(new_df, annot=labels, fmt='')
-                plt.title('Number of Subscribers/Followers for Top Influencers in a Category and Country on ' + platform)
-                plt.show()
-                fig_count += 1
-                plt.figure(fig_count)
+            df_platform = all_dfs[fig_count][['Influencer name', 'Category', 'Audience country', 'Subscribers']]
+            all_categories = df_platform['Category'].unique()
+            all_countries = df_platform['Audience country'].unique()
+            new_df = pd.DataFrame(columns=all_countries, index=all_categories)
+            labels = np.empty([len(all_categories), len(all_countries)])
+            labels[:] = np.nan
+            col = 0
+            for country in all_countries:
+                df_vals = []
+                row = 0
+                for category in all_categories:
+                    df_filtered_country = df_platform.loc[df_platform['Audience country'] == country]
+                    df_filtered_category = df_filtered_country.loc[df_filtered_country['Category'] == category]
+                    highest_following = df_filtered_category.loc[df_filtered_category['Followers'].idxmax()]
+                    df_vals.append(highest_following['Followers'])
+                    labels[row, col] = highest_following['Influencer name']
+                    row += 1
+                new_df[country] = df_vals
+                col += 1
+            sns.heatmap(new_df, annot=labels, fmt='')
+            plt.title('Number of Subscribers/Followers for Top Influencers in a Category and Country on ' + platform)
+            plt.show()
+            fig_count += 1
+            plt.figure(fig_count)
         return
     elif requested_media == 'Youtube':
         all_dfs = df_youtube
@@ -322,7 +322,72 @@ def heatmap(df_instagram, df_youtube, requested_media='Instagram'):
     plt.title('Number of Subscribers/Followers for Top Influencers in a Category and Country on ' + requested_media)
     plt.show()
 
-def dot_matrix():
+def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
+    '''
+    display pie chart of the percent of influencers that fall in each categories in each country for given social media platform
+    param: 
+    df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
+    df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    output:
+    matplotlib pie chart
+    '''
+    assert isinstance(df_instagram, pd.DataFrame)
+    assert isinstance(df_youtube, pd.DataFrame)
+    assert isinstance(requested_media, str)
+    platform_options = ['Instagram', 'Youtube']
+    fig_count = 0
+    if requested_media == 'All':
+        all_dfs = [df_instagram, df_youtube]
+        fig_count = 0
+        plt.figure(fig_count)
+        for platform in platform_options:
+            plt.figure(fig_count)
+            df_platform = all_dfs[fig_count][['Influencer name', 'Category','Audience country']]
+            all_countries = df_platform['Audience country'].unique()
+            plots = len(all_countries)
+            row_plots = int(plots/2)
+            col_plots = int(plots - row_plots)
+            num = 0
+            for country in all_countries:
+                df_filtered_country = df_platform.loc[df_platform['Audience country'] == country]
+                count_categories = df_filtered_country.groupby('Category')['Audience country'].count()
+                category_divisions = count_categories.values
+                category_labels = count_categories.index
+                explode = np.zeros(len(category_labels))
+                max_val = max(category_divisions)
+                max_idx = np.where(category_divisions == max_val)
+                explode[max_idx] = max_val
+                plt.subplot(row_plots,col_plots,num)
+                plt.pie(category_divisions, labels=category_labels, explode=explode)
+                plt.title(country)
+                num += 1
+            plt.suptitle('Demographic Division of Product Category by Number of Influencers on ' + platform)
+            plt.show()
+            fig_count += 1
+        return
+    elif requested_media == 'Youtube':
+        all_dfs = df_youtube
+    else:
+        all_dfs = df_instagram
+    df_platform = all_dfs[['Influencer name', 'Category','Audience country']]
+    all_countries = df_platform['Audience country'].unique()
+    plots = len(all_countries)
+    row_plots = int(plots/2)
+    col_plots = int(plots - row_plots)
+    for country in all_countries:
+        df_filtered_country = df_platform.loc[df_platform['Audience country'] == country]
+        count_categories = df_filtered_country.groupby('Category')['Audience country'].count()
+        category_divisions = count_categories.values
+        category_labels = count_categories.index
+        explode = np.zeros(len(category_labels))
+        max_val = max(category_divisions)
+        max_idx = np.where(category_divisions == max_val)
+        explode[max_idx] = max_val
+        plt.subplot(row_plots,col_plots,fig_count)
+        plt.pie(category_divisions, labels=category_labels, explode=explode)
+        plt.title(country)
+        fig_count += 1
+    plt.suptitle('Demographic Division of Product Category by Number of Influencers on ' + requested_media)    
     plt.show()
 
 instagram= pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram.csv")
@@ -331,4 +396,4 @@ youtube= pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/
 df_youtube = youtube.find_topn_influencers(youtube.df,10)[youtube.metrics[0]]
 tiktok = pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/TikTok/social media influencers - tiktok.csv")
 df_tiktok = tiktok.find_topn_influencers(tiktok.df,10)[tiktok.metrics[0]]
-heatmap(df_insta, df_youtube, 'Instagram')
+pie_chart(df_insta, df_youtube, 'Instagram')
