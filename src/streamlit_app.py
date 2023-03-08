@@ -13,7 +13,7 @@ st.write(instagram.find_topn_influencers(instagram.get_subcategory_items(instagr
 
 option = st.selectbox('Find top Influencers in a category', instagram.categories)
 
-#get top influencers across a sub-category based on subsrcibers
+#get top influencers across a sub-category based on subscribers
 filter_product=instagram.get_topn_influencers_categorical(option,instagram.metrics[0])
 st.write("Top influencers for each product based on subscribers")
 st.write(filter_product)

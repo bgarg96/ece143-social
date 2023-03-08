@@ -357,12 +357,3 @@ def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
         plt.suptitle('Demographic Division of Product Category by Number of Influencers on ' + platform)
         fig_count += 1
     return figs
-
-instagram = pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram.csv")
-df_instagram = instagram.find_topn_influencers(instagram.df,10)[instagram.metrics[0]]
-
-youtube = pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Youtube/social media influencers - youtube.csv")
-df_youtube = youtube.find_topn_influencers(youtube.df,10)[youtube.metrics[0]]
-
-tiktok = pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/TikTok/social media influencers - tiktok.csv")
-df_tiktok = tiktok.find_topn_influencers(tiktok.df,10)[tiktok.metrics[0]]
