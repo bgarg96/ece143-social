@@ -5,7 +5,7 @@ from typing import Set
 import numpy as np
 import pandas as pd
 
-from config import MONTHS, MONTHS_DTYPE, NAME, NUMERIC_COLUMNS, PRIMARY_KEY
+from config import MONTHS, MONTHS_DTYPE, NAME, METRICS, PRIMARY_KEY
 from uts import weighted_average
 
 
@@ -36,7 +36,7 @@ class Social:
 
         # converts string numerics to floats
         for column in df.columns:
-            if column in NUMERIC_COLUMNS:
+            if column in METRICS:
                 df[column] = df[column].apply(
                     self.value_to_float)
                 self.metrics.add(column)
@@ -105,6 +105,21 @@ class Social:
         '''
 
         return df[df[category].str.contains(subcategory)]
+    
+    def filter_by_month(self, df, month):
+        '''
+        gets items pertaining to a sub-category
+        param:
+        category (type: string) : main category
+        subcategory (type: string) : subcategory under the specific category
+
+        output:
+        items (type: pd.dataframe) : output data frame
+                column filtered by subcategory
+        '''
+        assert((month,str) and month in MONTHS),"invalid month"
+
+        return df[df['Month'].str.contains(month)]
 
     def find_topn_influencers(self, dataframe, N):
         '''
@@ -125,23 +140,25 @@ class Social:
 
         return top
 
-    def get_topn_influencers_categorical(self, criteria, metric, N=1):
+    def get_topn_influencers_categorical(self,criteria, metric, month=MONTHS[0],N=1):
         '''
         Pass a criteria(category) and get info of
             top influencers in each subcategory
         '''
         products = self.get_category_items(criteria)
+        
+        m_df= self.filter_by_month(self.df,month)
 
         for i, product in enumerate(products):
             if(i == 0):
                 filtered_df = self.find_topn_influencers(
-                    self.get_subcategory_items(self.df, criteria, product),
+                    self.get_subcategory_items(m_df, criteria, product),
                     1)[metric]
             else:
                 filtered_df = pd.concat([filtered_df,
                                          self.find_topn_influencers(
                                              self.get_subcategory_items(
-                                                 self.df, criteria, product),
+                                                m_df, criteria, product),
                                              1)[metric]], axis=0)
 
         return filtered_df
@@ -149,7 +166,7 @@ class Social:
     # helper functions
     def value_to_float(self, x):
         if type(x) == float or type(x) == int:
-            return x
+            return float(x)
         if 'K' in x:
             if len(x) > 1:
                 return float(x.replace('K', '')) * 1000
@@ -158,6 +175,3 @@ class Social:
             if len(x) > 1:
                 return float(x.replace('M', '')) * 1000000
             return 1000000.0
-        if 'B' in x:
-            return float(x.replace('B', '')) * 1000000000
-        return 0.0
