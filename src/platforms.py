@@ -1,69 +1,72 @@
 from collections import Counter
+from pathlib import Path
+from typing import Set
 
 import numpy as np
 import pandas as pd
 
+from config import MONTHS, MONTHS_DTYPE, NAME, NUMERIC_COLUMNS, PRIMARY_KEY
+from uts import weighted_average
+
 
 class Social:
 
-    def __init__(self, path):
+    def __init__(self, platform: str):
         '''
         initialize instance of platform
         '''
-        assert(isinstance(path,str)),"not a valid path"
-        # list of numeric column
-        self.numerics=('Likes', 'Comments', 'Views', 'Subscribers',  'Shares', 'AuthenticEngagement', 'EngagementAverage')
         # list of filter categories
-        self.filters=('Country','Category_1')
-        assert(isinstance(path, str)), "invalid file path "
-        self.read_to_dataframe(path)
-        self.preprocess_frame()
-        
+        self.metrics: Set[str] = set()
+        # TODO(PRASAD): approve these calls
+        self.df = self.load_dfs(platform)
+        self.poularity = weighted_average(self.df, 'Subscribers')
 
     def get_categories(self):
         '''
         Returns the categories in a dataframe
         '''
-        return self.categories
+        return list(self.df.columns)
 
-    def preprocess_frame(self):
+    def preprocess_frame(self, df: pd.DataFrame) -> pd.DataFrame:
         '''
         clean up dataframe
         '''
-        self.metrics = []
         # remove nan
-        self.df.fillna('other',axis=0, inplace=True)
+        df.fillna('other', axis=0, inplace=True)
 
-        # get attributes in csv
-        headings = self.df.head(0)
-        headings = (list(headings.columns))
         # converts string numerics to floats
-        for i,heading in enumerate(headings):
-            if(heading in self.numerics):
-                self.df[headings[i]] = self.df[headings[i]].apply(
+        for column in df.columns:
+            if column in NUMERIC_COLUMNS:
+                df[column] = df[column].apply(
                     self.value_to_float)
-                self.metrics.append(headings[i])
+                self.metrics.add(column)
 
-        # drop duplicate columns
-        self.df.drop_duplicates(
-            subset=[headings[1], headings[2]], inplace=True)
+        return df
 
-        self.categories = [heading.strip() for heading in headings]
-        self.name_head = headings[2]
+    def load_dfs(self, media: str) -> pd.DataFrame:
+        assert media in ['Instagram', 'TikTok', 'Youtube']
+        dir_path: Path = Path(__file__).absolute(
+        ).parent.parent / 'data' / media
+        dfs = {str: pd.DataFrame}
+        for mnth in MONTHS:
+            dfs[mnth] = self.preprocess_frame(
+                pd.read_csv(dir_path / f"{media}_{mnth}.csv",
+                            encoding='utf-8'))
+            dfs[mnth]['Month'] = mnth
+            # drop duplicate columns
+            dfs[mnth] = dfs[mnth].drop_duplicates(subset=[PRIMARY_KEY])
+
+        df: pd.DataFrame = pd.concat([dfs[mnth]
+                                     for mnth in MONTHS], ignore_index=True)
+        df['Month'] = df['Month'].astype(MONTHS_DTYPE)
+        print(f"A Data Frame of shape {df.shape} formed!!")
+        return df
 
     def get_influencer_fromdf(self, df):
         '''
         pass a dataframe and extract influencer names
         '''
-        return list(df[self.name_head])
-
-    def read_to_dataframe(self, path):
-        '''
-        Reads a csv into a dataframe.
-        param:
-        path (type: string) : file name
-        '''
-        self.df = pd.read_csv(path)
+        return list(df[NAME])
 
     def get_category_items(self, category):
         '''
@@ -75,7 +78,7 @@ class Social:
         df (type: pd.dataframe) : output data frame column
         '''
 
-        assert(category in self.categories), "inavlid category"
+        assert(category in self.get_categories()), "inavlid category"
         assert(isinstance(self.df, pd.DataFrame)), "inavlid dataframe"
 
         # remove nans
@@ -88,20 +91,6 @@ class Social:
         subcategories = Counter(subcategories)
 
         return list(subcategories.keys())
-
-    # def process_subcategories(self, subcategories):
-
-    #     assert(isinstance(subcategories,list)),"inavlid sub-category list"
-    #     synonyms_dict = {}
-    #     for word in subcategories:
-    #         synonym = Synonyms(word)
-    #         synonyms_results = synonym.find_synonyms()
-    #         if synonyms_results is not None:
-    #             synonyms_dict[word] = synonyms_results
-    #         else:
-    #             synonyms_dict[word] = 'no synonyms found'
-
-    #     return synonyms_dict
 
     def get_subcategory_items(self, df, category, subcategory):
         '''
