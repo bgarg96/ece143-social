@@ -86,6 +86,8 @@ def bar_InfluencersvFollowers(df_top_instagram, df_top_youtube, df_top_tiktok, r
     df_top_instagram (type: pd.DataFrame) : non-dated DataFrame of top influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of top influencers on youtube data
     df_tiktok (type: pd.DataFrame) : non-dated DataFrame of top influencers on tiktok data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     matplotlib bar chart
     '''
@@ -123,6 +125,8 @@ def bar_CountryvInfluencers(df_instagram, df_youtube, requested_media='Instagram
     param: 
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     matplotlib bar chart
     '''
@@ -168,6 +172,8 @@ def bar_CategoryvViews(df_instagram, df_youtube, requested_media='Instagram'):
     param: 
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     matplotlib bar chart
     '''
@@ -213,6 +219,8 @@ def bar_CategoryvInfluencers(df_instagram, df_youtube, requested_media='Instagra
     param: 
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     matplotlib bar chart
     '''
@@ -258,6 +266,8 @@ def heatmap(df_instagram, df_youtube, requested_media='Instagram'):
     param: 
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     seaborn heat map
     '''
@@ -328,6 +338,8 @@ def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
     param: 
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of influencers on instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of influencers on youtube data
+    requested_media (type: string): which social media platform's information to display
+
     output:
     matplotlib pie chart
     '''
@@ -389,11 +401,3 @@ def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
         fig_count += 1
     plt.suptitle('Demographic Division of Product Category by Number of Influencers on ' + requested_media)    
     plt.show()
-
-instagram= pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram.csv")
-df_insta = instagram.find_topn_influencers(instagram.df,10)[instagram.metrics[0]]
-youtube= pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Youtube/social media influencers - youtube.csv")
-df_youtube = youtube.find_topn_influencers(youtube.df,10)[youtube.metrics[0]]
-tiktok = pt.Social("C:/Users/forMED Technologies/Documents/Github/ece143-social/data/TikTok/social media influencers - tiktok.csv")
-df_tiktok = tiktok.find_topn_influencers(tiktok.df,10)[tiktok.metrics[0]]
-pie_chart(df_insta, df_youtube, 'Instagram')
