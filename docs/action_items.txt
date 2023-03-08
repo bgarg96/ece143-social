@@ -1,0 +1,9 @@
+points for presentation
+
+-proper software engineering process - requirements ->HLD ->LLD
+-proper responsibility matrix 
+-compare trends for users ( growth/popularity based on subscriber engagement)
+-create a parent class for all platforms - where we can 
+- convert xlsx to csv and make column names consistent
+-utf 8 to preseve symbols in account names 
+-filter: influencers with largest growth trend - weighted average 
