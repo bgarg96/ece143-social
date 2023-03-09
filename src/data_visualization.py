@@ -7,81 +7,139 @@ import numpy as np
 import seaborn as sns
 
 # line chart
-def line_chart(df_social_medias_time, requested_media='Instagram'):
-    '''
-    display line chart of top N influencers per social media platform requested over time based on a METRIC
-    param:
-    df_medias_time (type: pd.DataFrame) : Dataframe where columns include...
-        0. Influencer Name --> string of TOP_N influencer
-        1. sep-2022 --> number of METRIC in sep
-        2. oct-2022 --> number of METRIC in oct
-        3. nov-2022 --> number of METRIC in nov
-        4. dec-2022 --> number of METRIC in dec
-    if FILTER is specified, df_medias_time will be a subset of the COUNTRY or CATEGORY_1 with the same information
-    platform (type: string): platform selected
-    month (type: string): month selected
-    df_filter (type: string): filter selected, if any. df_filter must be a specific country/category if COUNTRY/CATEGORY_1 is chosen
-    metric (type: string): metric selected
+def line_chart(df_social_medias_time: pd.DataFrame, requested_media='Instagram', df_filter: str='Subscribers', N = 5):
+   '''
+   display line chart of top N influencers per social media platform requested over time based on a METRIC
+   param:
+   df_medias_time (type: pd.DataFrame) : Dataframe where columns include...
+       0. Influencer Name --> string of TOP_N influencer
+       1. sep-2022 --> number of METRIC in sep
+       2. oct-2022 --> number of METRIC in oct
+       3. nov-2022 --> number of METRIC in nov
+       4. dec-2022 --> number of METRIC in dec
+   if FILTER is specified, df_medias_time will be a subset of the COUNTRY or CATEGORY_1 with the same information
+   platform (type: string): platform selected
+   month (type: string): month selected
+   df_filter (type: string): filter selected, if any. df_filter must be a specific country/category if COUNTRY/CATEGORY_1 is chosen
+   metric (type: string): metric selected
 
-    output:
-    matplotlib line chart
-    '''
-    assert isinstance(df_social_medias_time, pd.DataFrame)
-    assert isinstance(requested_media, str)
-    platform_options = ['Instagram', 'TikTok', 'Youtube']
-    if '&' in requested_media:
-        and_idx = requested_media.index('&')
-        first_media = requested_media[0:and_idx-1]
-        second_media = requested_media[and_idx+2:]
-        platform_options = [i for i in platform_options if i == first_media or i == second_media]
-    elif requested_media != 'All':
-        platform_options = requested_media
-    palette = plt.get_cmap('Set1')
-    fig_count = 0
-    figs = {}
-    for platform in platform_options:
-        df_platform = df_social_medias_time.loc[df_social_medias_time['social media'] == platform]
-        num = 0
-        figs[fig_count] = plt.figure(fig_count)
-        for influencer_name in df_platform['Influencer Name']:
-            all_influencer_subs = df_platform.loc[df_platform['Influence Name'] == influencer_name]
-            subs_vals = df_platform[list(all_influencer_subs.iloc[:, 2:]).to_numpy()][0]
-            months = np.array(df_platform.iloc[:, 2:].keys())
-            num+=1
-            figs[fig_count] = plt.subplot(5,2,num) # hard-coded 10
-            plt.plot(months, subs_vals, marker='o', markersize=12, color=palette(num), linewidth=2.0, alpha=0.9)
-            plt.xticks(range(len(subs_vals)), months)
-            plt.title(influencer_name + ' Following in 2022', loc='left', fontsize=12, fontweight=0, color=palette(num))
-        plt.suptitle(platform + 'Top Influencers Following in 2022')
-        plt.text(0.5, 0.02, 'Time', ha='center', va='center')
-        plt.text(0.06, 0.5, 'Number of Followers', ha='center', va='center', rotation='vertical')
-        fig_count += 1
-    return figs
+   output:
+   matplotlib line chart
+   '''
+   assert isinstance(df_social_medias_time, pd.DataFrame)
+   assert isinstance(requested_media, str)
 
-def venn_diagram(df_instagram, df_youtube, months=MONTHS[0],df_filter: str='Country'):
-    '''
+   # Creating sample data
+   data = {'year': [2010, 2011, 2012, 2013, 2014, 2015],
+           'sales': [100, 200, 300, 400, 500, 600]}
+
+   # Creating pandas dataframe
+   df = pd.DataFrame(data)
+
+   # Creating a line chart
+   plt.plot(df['year'], df['sales'])
+   plt.xlabel('Year')
+   plt.ylabel('Sales')
+   plt.title('Sales by Year')
+   plt.show()
+
+   # change subscriber counts to floats from strings
+   for i in range(len(df_social_medias_time['Subscribers'])):
+      if df_social_medias_time['Subscribers'][i][-1]== 'M' or df_social_medias_time['Subscribers'][i][-1]== 'm':
+          df_social_medias_time['Subscribers'][i] = df_social_medias_time['Subscribers'][i][:-1]
+          df_social_medias_time['Subscribers'][i] = float(df_social_medias_time['Subscribers'][i])
+          df_social_medias_time['Subscribers'][i] *= 1000000
+          continue
+      if df_social_medias_time['Subscribers'][i][-1]== 'K' or df_social_medias_time['Subscribers'][i][-1]== 'k':
+          df_social_medias_time['Subscribers'][i] = df_social_medias_time['Subscribers'][i][:-1]
+          df_social_medias_time['Subscribers'][i] = float(df_social_medias_time['Subscribers'][i])
+          df_social_medias_time['Subscribers'][i] *= 1000
+
+   # find max subscribers from month of sept
+   sep_indeces = []
+   months = (df_social_medias_time['Month'])
+   for i in range(len(months)):
+      if months[i] == 'Sep':
+         sep_indeces.append(i)
+   max_sep_index = max(sep_indeces)
+   min_sep_index = min(sep_indeces)
+
+   sep_subscribers = df_social_medias_time['Subscribers'][min_sep_index:max_sep_index+1]
+   sep_subscribers_names = df_social_medias_time['Name'][min_sep_index:max_sep_index+1]
+
+   # get the max N subscribers for september to begin line chart
+   N_Subscribers = sep_subscribers[:N]
+   N_Names = sep_subscribers_names[:N]
+
+   Subscriberlists = {}
+   for name in (N_Names):
+      for i in range(len(df_social_medias_time['Name'])):
+         if df_social_medias_time['Name'][i] == name:
+            if name in Subscriberlists:
+               Subscriberlists[name].append(df_social_medias_time['Subscribers'][i])
+            else:
+               Subscriberlists[name] = [df_social_medias_time['Subscribers'][i]]
+
+   print(Subscriberlists)
+
+   # plt.plot(df_social_medias_time['Name'], df_social_medias_time['Subscribers'])
+   # plt.xlabel('Year')
+   # plt.ylabel('Sales')
+   # plt.title('Sales by Year')
+   # plt.show()
+
+   # platform_options = ['Instagram', 'TikTok', 'Youtube']
+   # if '&' in requested_media:
+   #    and_idx = requested_media.index('&')
+   #    first_media = requested_media[0:and_idx-1]
+   #    second_media = requested_media[and_idx+2:]
+   #    platform_options = [i for i in platform_options if i == first_media or i == second_media]
+   # elif requested_media != 'All':
+   #    platform_options = requested_media
+   # palette = plt.get_cmap('Set1')
+   # fig_count = 0
+   # figs = {}
+   # for platform in platform_options:
+   #    df_platform = df_social_medias_time.loc[df_social_medias_time['Country'] == platform]
+   #    num = 0
+   #    figs[fig_count] = plt.figure(fig_count)
+   #    for influencer_name in df_platform['Name']:
+   #       all_influencer_subs = df_platform.loc[df_platform['Name'] == influencer_name]
+   #       subs_vals = df_platform[list(all_influencer_subs.iloc[:, 2:]).to_numpy()][0]
+   #       months = np.array(df_platform.iloc[:, 2:].keys())
+   #       num+=1
+   #       figs[fig_count] = plt.subplot(5,2,num) # hard-coded 10
+   #       plt.plot(months, subs_vals, marker='o', markersize=12, color=palette(num), linewidth=2.0, alpha=0.9)
+   #       plt.xticks(range(len(subs_vals)), months)
+   #       plt.title(influencer_name + ' Following in 2022', loc='left', fontsize=12, fontweight=0, color=palette(num))
+   #    plt.suptitle(platform + 'Top Influencers Following in 2022')
+   #    plt.text(0.5, 0.02, 'Time', ha='center', va='center')
+   #    plt.text(0.06, 0.5, 'Number of Followers', ha='center', va='center', rotation='vertical')
+   #    fig_count += 1
+   # return figs
+
+def venn_diagram(df_instagram: pd.DataFrame, df_youtube: pd.DataFrame, months: str=MONTHS[0], df_filter: str='Country') -> plt.figure():
+    ''''
     display venn diagram comparing and contrasting countries for instagram and youtube
     param:
-    df_instagram (type: pd.DataFrame) : non-dated DataFrame of instagram data
-    df_youtube (type: pd.DataFrame) : non-dated DataFrame of youtube data
-    df_filter (type: str) : filter to compare
+    df_instagram (type: pd.DataFrame) : UNFILTERED DataFrame of instagram data
+    df_youtube (type: pd.DataFrame) : UNFILTERED DataFrame of youtube data
+    month (type: string): month selected
+
     output:
     matplotlib_venn venn diagram
     '''
+    # TODO: Test the code
+    # TODO: Allow DataFrame input to not be filtered by a certain metric
+    # TODO: Produce 4 plots for all months, if requested
+
     assert isinstance(df_instagram, pd.DataFrame)
     assert isinstance(df_youtube, pd.DataFrame)
     instagram_countries = df_instagram[df_filter].unique()
     youtube_countries = df_youtube[df_filter].unique()
 
-    # get rid of nan values
-    for i in range(len(instagram_countries)):
-      if pd.isnull(instagram_countries[i]) == True:
-         instagram_countries_new = np.delete(instagram_countries,i)
-    if 'instagram_countries_new' in locals(): instagram_countries = instagram_countries_new
-    for i in range(len(youtube_countries)):
-      if pd.isnull(youtube_countries[i]) == True:
-         youtube_countries_new = np.delete(youtube_countries,i)
-    if 'youtube_countries_new' in locals(): youtube_countries = youtube_countries_new
+    instagram_countries = df_instagram[df_filter].dropna().unique()
+    youtube_countries = df_youtube[df_filter].dropna().unique()
 
     # determine common countries for middle of venn
     common_countries = np.intersect1d(instagram_countries, youtube_countries)
@@ -94,9 +152,6 @@ def venn_diagram(df_instagram, df_youtube, months=MONTHS[0],df_filter: str='Coun
     venn2_circles(subsets=(insta_unique, youtube_unique, len(common_countries))) # remove if not wanted
     plt.title('Instagram vs Youtube Number of different ' + df_filter+ "'s in "+ months + ' 2022')
     return figs
-
-
-
 
 def bar_InfluencersvFollowers(df_top_instagram, df_top_youtube, df_top_tiktok, requested_media='Instagram'):
     '''
@@ -412,7 +467,43 @@ def pie_chart(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MON
         plt.suptitle('Product Category Division of Influencers by ' + metric + ' on ' + platform + ' in ' + month + ' 2022')
     return figs
 
-instagram = pd.read_csv('/Users/nicky/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
-youtube = pd.read_csv('/Users/nicky/Documents/Github/ece143-social/data/Youtube/Youtube_Dec.csv')
-# pie_chart(instagram, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
-venn_diagram(instagram, youtube, 'Dec','Country').show()
+def social_medias_time_filepath(platformtype = 'Instagram'):
+   '''
+   This takes a specified social media platform and creates a csv with the combinations of those platforms
+   returns a filepath
+   '''
+   import glob
+   import os
+
+   assert isinstance(platformtype,str)
+   path = '/Users/nicky/Documents/Github/ece143-social/data/'+platformtype
+
+   # Get a list of all the CSV files in the directory
+   all_files = glob.glob(path + "/*.csv")
+
+   # Loop through each file in the directory and read it into a dataframe
+   dfs = []
+   for filename in all_files:
+      df = pd.read_csv(filename)
+      df['Month'] = os.path.basename(filename[-7:-4])
+      if filename[-7:-4] == 'Sep' or filename[-7:-4] == 'Oct' or filename[-7:-4] == 'Nov' or filename[-7:-4] == 'Dec':
+         dfs.append(df)
+
+   # Merge the dataframes on the common column
+   merged_df = pd.concat(dfs, axis=0, ignore_index=True)
+
+   merged_df.to_csv('/Users/nicky/Documents/Github/ece143-social/data/'+platformtype+'/'+platformtype+'_Merged.csv', index=False)
+
+   return '/Users/nicky/Documents/Github/ece143-social/data/'+platformtype+'/'+platformtype+'_Merged.csv'
+
+
+
+filepath = social_medias_time_filepath('Youtube')
+df_social_medias_time = pd.read_csv(filepath)
+
+# instagram_dec = pd.read_csv('/Users/nicky/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
+# youtube_dec = pd.read_csv('/Users/nicky/Documents/Github/ece143-social/data/Youtube/Youtube_Dec.csv')
+# pie_chart(instagram_dec, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
+# venn_diagram(instagram_dec, youtube_dec, 'Dec','Country').show()
+
+line_chart(df_social_medias_time, 'Instagram','Country',5)
