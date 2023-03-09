@@ -347,6 +347,18 @@ def pie_chart(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MON
         #    continue
         category_divisions = count_categories.values
         category_labels = count_categories.index
+        if len(category_labels) > 6:
+            sorted_idx = [b[0] for b in sorted(enumerate(category_divisions),key=lambda i:i[1])]
+            sorted_labels = []
+            for i in sorted_idx:
+                sorted_labels.append(category_labels[i])
+            category_labels = sorted_labels[-6:]
+            category_labels.insert(0, 'Other')
+            sort_category_divisions = sorted(category_divisions)
+            highest_divisions = sort_category_divisions[-6:]
+            other_vals = sum(sort_category_divisions[:-6])
+            highest_divisions.insert(0, other_vals)
+            category_divisions = highest_divisions
         explode = np.zeros(len(category_labels))
         max_val = max(category_divisions)
         max_idx = np.where(category_divisions == max_val)
@@ -383,3 +395,7 @@ def pie_chart(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MON
         num += 1
         plt.suptitle('Product Category Division of Influencers by ' + metric + ' on ' + platform + ' in ' + month + ' 2022')
     return figs
+
+instagram = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
+pie_chart(instagram, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
+print()
