@@ -133,7 +133,7 @@ dmypy.json
 *.xlsx
 
 # .vs folder
-/.vs
+.vs/*
 
 # .yaml
 *.yaml
