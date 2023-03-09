@@ -318,7 +318,7 @@ def pie_chart(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MON
     platform (type: string): platform selected
     month (type: string): month selected
     df_filter (type: string): independent variable for pie chart
-    metric (type: string): a single country if filter == 'Country', any METRICS value if filter == 'Category_1' (including 'AccountName')
+    metric (type: string): a single country if filter == 'Country', any METRICS value if filter == 'Category_1'
     category (type: string): a single category if filter == 'Category' from the dataframe
 
     output:
