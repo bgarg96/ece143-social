@@ -73,7 +73,6 @@ class Social:
         gets items pertaining to a category
         param:
         path (type: string) : file name
-
         output:
         df (type: pd.dataframe) : output data frame column
         '''
@@ -98,26 +97,24 @@ class Social:
         param:
         category (type: string) : main category
         subcategory (type: string) : subcategory under the specific category
-
         output:
         items (type: pd.dataframe) : output data frame
                 column filtered by subcategory
         '''
 
         return df[df[category].str.contains(subcategory)]
-    
+
     def filter_by_month(self, df, month):
         '''
         gets items pertaining to a sub-category
         param:
         category (type: string) : main category
         subcategory (type: string) : subcategory under the specific category
-
         output:
         items (type: pd.dataframe) : output data frame
                 column filtered by subcategory
         '''
-        assert((month,str) and month in MONTHS),"invalid month"
+        assert((month, str) and month in MONTHS), "invalid month"
 
         return df[df['Month'].str.contains(month)]
 
@@ -127,7 +124,6 @@ class Social:
         param:
         dataframe (type: pd.DataFrame) : dataframe
         N (type: int) : number of influencer data needed
-
         output:
         dictionary of dataframe (type: pd.DataFrame):
                 sorted top N influencer data
@@ -140,14 +136,18 @@ class Social:
 
         return top
 
-    def get_topn_influencers_categorical(self,criteria, metric, month=MONTHS[0],N=1):
+    def get_topn_influencers_categorical(self,
+                                         criteria,
+                                         metric,
+                                         month=MONTHS[0],
+                                         N=1):
         '''
         Pass a criteria(category- 'country or product') and get info of
             top influencers in each subcategory
         '''
         products = self.get_category_items(criteria)
-        
-        m_df= self.filter_by_month(self.df,month)
+
+        m_df = self.filter_by_month(self.df, month)
 
         for i, product in enumerate(products):
             if(i == 0):
@@ -158,7 +158,7 @@ class Social:
                 filtered_df = pd.concat([filtered_df,
                                          self.find_topn_influencers(
                                              self.get_subcategory_items(
-                                                m_df, criteria, product),
+                                                 m_df, criteria, product),
                                              1)[metric]], axis=0)
         #sort largest to smallest 
         filtered_df = filtered_df.sort_values(by=[metric], ascending=False)
@@ -225,6 +225,7 @@ class Social:
     # helper functions
     def value_to_float(self, x):
         if type(x) == float or type(x) == int:
+            return float(x)
             return float(x)
         if 'K' in x:
             if len(x) > 1:
