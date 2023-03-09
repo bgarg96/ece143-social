@@ -2,16 +2,18 @@ import matplotlib.pyplot as plt
 from matplotlib_venn import venn2, venn2_circles
 import pandas as pd
 import platforms as pt
+from config import MONTHS, MONTHS_DTYPE, NAME, NUMERIC_COLUMNS, PRIMARY_KEY, PLATFORMS, TOP_N
 import numpy as np
 import seaborn as sns
 
 # line chart
 def line_chart(df_social_medias_time, requested_media='Instagram'):
     '''
+    # TODO: df_social_medias_time is required in ... format
     display line chart of top influencers per social media requested over time
     param: 
     df_social_medias_time (type: pd.DataFrame) : Dataframe where columns include... 
-        0. Influencer Name --> string of top influencer
+        0. Influencer Name --> string of TOP_N influencer
         1. social media --> string of corresponding social media platform for top influencer
         2. june-2022 --> number of subscribers/followers in june 
         3. sep-2022 --> number of subscribers/followers in sep 
@@ -45,7 +47,7 @@ def line_chart(df_social_medias_time, requested_media='Instagram'):
             subs_vals = df_platform[list(all_influencer_subs.iloc[:, 2:]).to_numpy()][0]
             months = np.array(df_platform.iloc[:, 2:].keys())
             num+=1
-            figs[fig_count] = plt.subplot(5,2,num)
+            figs[fig_count] = plt.subplot(5,2,num) # hard-coded 10
             plt.plot(months, subs_vals, marker='o', markersize=12, color=palette(num), linewidth=2.0, alpha=0.9)
             plt.xticks(range(len(subs_vals)), months)
             plt.title(influencer_name + ' Following in 2022', loc='left', fontsize=12, fontweight=0, color=palette(num))
@@ -56,7 +58,7 @@ def line_chart(df_social_medias_time, requested_media='Instagram'):
         fig_count += 1
     return figs
 
-def venn_diagram(df_instagram, df_youtube):
+def venn_diagram(df_instagram, df_youtube, months=MONTH[0]):
     '''
     display venn diagram comparing and contrasting countries for instagram and youtube
     param: 
@@ -183,7 +185,7 @@ def bar_CategoryvViews(df_instagram, df_youtube, requested_media='Instagram'):
     assert isinstance(requested_media, str)
     platform_options = ['Instagram', 'Youtube']
     all_dfs = [df_instagram, df_youtube]
-    if requested_media != 'All':
+    if requested_media == 'All':
         new_df = pd.DataFrame()
         num = 0
         for platform in platform_options:
@@ -340,10 +342,12 @@ def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
         plots = len(all_countries)
         row_plots = int(plots**0.5)
         col_plots = plots // row_plots
-        num = 0
+        num = 1
         for country in all_countries:
             df_filtered_country = df_platform.loc[df_platform['Audience country'] == country]
             count_categories = df_filtered_country.groupby('Category')['Audience country'].count()
+            if len(df_filtered_country) == 0:
+                continue
             category_divisions = count_categories.values
             category_labels = count_categories.index
             explode = np.zeros(len(category_labels))
@@ -357,3 +361,9 @@ def pie_chart(df_instagram, df_youtube, requested_media='Instagram'):
         plt.suptitle('Demographic Division of Product Category by Number of Influencers on ' + platform)
         fig_count += 1
     return figs
+
+instagram = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram.csv')
+youtube = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/social media influencers - instagram.csv')
+pie_chart(instagram, youtube, 'All').show()
+for fig in figs:
+    fig.show()
