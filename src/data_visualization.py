@@ -64,7 +64,7 @@ def venn_diagram(df_instagram, df_youtube, months=MONTHS[0],df_filter: str='Coun
     param:
     df_instagram (type: pd.DataFrame) : non-dated DataFrame of instagram data
     df_youtube (type: pd.DataFrame) : non-dated DataFrame of youtube data
-
+    df_filter (type: str) : filter to compare
     output:
     matplotlib_venn venn diagram
     '''
@@ -92,7 +92,7 @@ def venn_diagram(df_instagram, df_youtube, months=MONTHS[0],df_filter: str='Coun
     figs = plt.figure()
     venn2(subsets=(insta_unique, youtube_unique, len(common_countries)), set_labels=('Instagram', 'Youtube'), set_colors=('b', 'r'), alpha = 0.5)
     venn2_circles(subsets=(insta_unique, youtube_unique, len(common_countries))) # remove if not wanted
-    plt.title('Instagram vs Youtube ' + df_filter+ ' in '+ months + ' 2022')
+    plt.title('Instagram vs Youtube Number of different ' + df_filter+ "'s in "+ months + ' 2022')
     return figs
 
 
