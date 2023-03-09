@@ -226,7 +226,6 @@ class Social:
     def value_to_float(self, x):
         if type(x) == float or type(x) == int:
             return float(x)
-            return float(x)
         if 'K' in x:
             if len(x) > 1:
                 return float(x.replace('K', '')) * 1000
