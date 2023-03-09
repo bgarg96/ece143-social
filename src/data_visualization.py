@@ -29,19 +29,6 @@ def line_chart(df_social_medias_time: pd.DataFrame, requested_media='Instagram',
    assert isinstance(df_social_medias_time, pd.DataFrame)
    assert isinstance(requested_media, str)
 
-   # Creating sample data
-   data = {'year': [2010, 2011, 2012, 2013, 2014, 2015],
-           'sales': [100, 200, 300, 400, 500, 600]}
-
-   # Creating pandas dataframe
-   df = pd.DataFrame(data)
-
-   # Creating a line chart
-   plt.plot(df['year'], df['sales'])
-   plt.xlabel('Year')
-   plt.ylabel('Sales')
-   plt.title('Sales by Year')
-   plt.show()
 
    # change subscriber counts to floats from strings
    for i in range(len(df_social_medias_time['Subscribers'])):
@@ -80,7 +67,15 @@ def line_chart(df_social_medias_time: pd.DataFrame, requested_media='Instagram',
             else:
                Subscriberlists[name] = [df_social_medias_time['Subscribers'][i]]
 
-   print(Subscriberlists)
+   for name in N_Names:
+      plt.plot(['Sep','Oct','Nov','Dec'],Subscriberlists[name])
+
+
+   plt.xlabel('Month')
+   plt.ylabel('Subscribers')
+   plt.title('Subscribers by Month')
+   plt.legend(N_Names)
+   plt.show()
 
    # plt.plot(df_social_medias_time['Name'], df_social_medias_time['Subscribers'])
    # plt.xlabel('Year')
@@ -470,6 +465,7 @@ def pie_chart(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MON
 def social_medias_time_filepath(platformtype = 'Instagram'):
    '''
    This takes a specified social media platform and creates a csv with the combinations of those platforms
+   sorted in chronological order (Sep-Dec)
    returns a filepath
    '''
    import glob
@@ -481,9 +477,17 @@ def social_medias_time_filepath(platformtype = 'Instagram'):
    # Get a list of all the CSV files in the directory
    all_files = glob.glob(path + "/*.csv")
 
+   all_files_ordered = [0,0,0,0]
+   for filename in all_files:
+      if filename[-7:-4] == 'Sep': all_files_ordered[0]=filename
+      elif filename[-7:-4] == 'Oct': all_files_ordered[1]=filename
+      elif filename[-7:-4] == 'Nov': all_files_ordered[2]=filename
+      elif filename[-7:-4] == 'Dec': all_files_ordered[3]=filename
+
+
    # Loop through each file in the directory and read it into a dataframe
    dfs = []
-   for filename in all_files:
+   for filename in all_files_ordered:
       df = pd.read_csv(filename)
       df['Month'] = os.path.basename(filename[-7:-4])
       if filename[-7:-4] == 'Sep' or filename[-7:-4] == 'Oct' or filename[-7:-4] == 'Nov' or filename[-7:-4] == 'Dec':
@@ -506,4 +510,4 @@ df_social_medias_time = pd.read_csv(filepath)
 # pie_chart(instagram_dec, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
 # venn_diagram(instagram_dec, youtube_dec, 'Dec','Country').show()
 
-line_chart(df_social_medias_time, 'Instagram','Country',5)
+line_chart(df_social_medias_time, 'Instagram','Country',6)
