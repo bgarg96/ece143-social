@@ -11,5 +11,5 @@ METRICS: Set[str] = {'Subscribers', 'AuthenticEngagement',
                      'EngagementAverage',
                      'Views', 'Likes', 'Comments', 'Shares'}
 NAME: str = 'Name'
-FILTERS: Set[str] = {'Country', 'Category_1'}
+FILTERS: List[str] = ['Country', 'Category_1']
 TOP_N: List[int] = [1, 3, 5, 10]

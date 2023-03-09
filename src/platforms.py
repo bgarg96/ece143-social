@@ -1,11 +1,11 @@
 from collections import Counter
 from pathlib import Path
 from typing import Set
-
+from collections import defaultdict
 import numpy as np
 import pandas as pd
 
-from config import METRICS, MONTHS, MONTHS_DTYPE, NAME, PRIMARY_KEY
+from config import MONTHS, MONTHS_DTYPE, NAME, METRICS, PRIMARY_KEY, FILTERS
 from uts import weighted_average
 
 
@@ -142,7 +142,7 @@ class Social:
                                          month=MONTHS[0],
                                          N=1):
         '''
-        Pass a criteria(category) and get info of
+        Pass a criteria(category- 'country or product') and get info of
             top influencers in each subcategory
         '''
         products = self.get_category_items(criteria)
@@ -160,8 +160,67 @@ class Social:
                                              self.get_subcategory_items(
                                                  m_df, criteria, product),
                                              1)[metric]], axis=0)
+        #sort largest to smallest 
+        filtered_df = filtered_df.sort_values(by=[metric], ascending=False)
 
         return filtered_df
+    
+
+    def get_N_most_popular_cat(self,df,metric,N,country):
+        """_summary_
+
+        Args:
+            df (pd.Dataframe): input dataframe 
+            N (int): number of influencers data to return
+            country (str): country selected for filtering
+
+        Returns:
+            _type_: returns dataframe containing top products to market in a country based on total influencer metric (subsriber, engagement etc)
+        """        
+        # get influencers for a country
+        df= df[df[FILTERS[0]].str.contains(country)]
+        products=self.get_category_items(FILTERS[1])
+        dictp=defaultdict(float)
+
+        for product in products:
+            filtered_df = df[df[FILTERS[1]].str.contains(product)]
+            dictp[product]= sum(list(filtered_df[metric]))
+
+        new_df=pd.DataFrame(dictp.items(),columns=["Category_1","Aggregated "+metric])
+        new_df = new_df.sort_values(by=["Aggregated "+metric], ascending=False)
+
+        if(N=='All'):
+            return new_df
+        else:
+            return new_df.head(N)
+
+    def get_N_most_popular_country(self,df,metric,N,category):
+        """_summary_
+
+        Args:
+            df (pd.Dataframe): input dataframe 
+            N (int): number of influencers data to return
+            category (str): category selected for filtering
+
+        Returns:
+            _type_: returns dataframe containing top countries to market a commodity based on total influencer metric (subsriber, engagement etc)
+        """        
+        # get influencers for a country
+        df= df[df[FILTERS[1]].str.contains(category)]
+        countries=self.get_category_items(FILTERS[0])
+        dictp=defaultdict(float)
+
+        for country in countries:
+            filtered_df = df[df[FILTERS[0]].str.contains(country)]
+            dictp[country]= sum(list(filtered_df[metric]))
+
+        new_df=pd.DataFrame(dictp.items(),columns=["Country","Aggregated "+metric])
+        new_df = new_df.sort_values(by=["Aggregated "+metric], ascending=False)
+
+        if(N=='All'):
+            return new_df
+        else:
+            return new_df.head(N)   
 
     # helper functions
     def value_to_float(self, x):
