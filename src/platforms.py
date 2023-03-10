@@ -16,8 +16,7 @@ class Social:
         initialize instance of platform
         '''
         # list of filter categories
-        self.metrics: Set[str] = set()
-        # TODO(PRASAD): approve these calls
+        self.metrics: list[str] = []
         self.df = self.load_dfs(platform)
         self.poularity = weighted_average(self.df, 'Subscribers')
 
@@ -39,7 +38,7 @@ class Social:
             if column in METRICS:
                 df[column] = df[column].apply(
                     self.value_to_float)
-                self.metrics.add(column)
+                self.metrics.append(column)
 
         return df
 

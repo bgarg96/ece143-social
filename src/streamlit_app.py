@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 import platforms as pt
-from config import FILTERS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
+from config import FILTERS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N, METRICS
 import data_visualization as dv
 import uts
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
             'Find top Influencers in a category', optionx_combo)
 
         # get top influencers across a sub-category based on subsrcibers
-        optionx = st.selectbox('Select Metric: ', platform.metrics)
+        optionx = st.selectbox('Select Metric: ', platform.metrics, index=platform.metrics.index(METRICS[0]))
         filter_product = platform.get_topn_influencers_categorical(
             option, optionx, month=option_months)
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
             'Select Number of Influencers to display',
             TOP_N,
             index=default_topn)
-        option4 = st.selectbox('Select Metric', platform.metrics)
+        option4 = st.selectbox('Select Metric', platform.metrics, index=platform.metrics.index(METRICS[0]))
 
         # get top influencers across a sub-category based on metric
         subframe = platform.filter_by_month(platform.df, option_months)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         default_topn = TOP_N.index(3)
         optionN = st.selectbox(
             'Select top N categories to display', optionsN, index=default_topn)
-        optionM = st.selectbox('Select Aggregated Metric', platform.metrics)
+        optionM = st.selectbox('Select Aggregated Metric', platform.metrics, index=platform.metrics.index(METRICS[0]))
         df_cat = platform.get_N_most_popular_cat(platform.filter_by_month(
             platform.df, option_months), optionM, optionN, optionC)
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
             optionsN2,
             index=default_topn)
         optionM2 = st.selectbox(
-            'Select an Aggregated Metric', platform.metrics)
+            'Select an Aggregated Metric', platform.metrics, index=platform.metrics.index(METRICS[0]))
         df_cat = platform.get_N_most_popular_country(platform.filter_by_month(
             platform.df, option_months), optionM2, optionN2, optionP)
 
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                                platform.get_category_items(FILTERS[1]))
         
         optionM3 = st.selectbox(
-            'Select a Metric :', platform.metrics)
+            'Select a Metric :', platform.metrics, index=platform.metrics.index(METRICS[0]))
 
         # N and metric slection needed 
         filter_df_month= platform.filter_by_month(platform.df,month=option_months)
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     with my_expander6:
         
         metric = st.selectbox(
-            'Select a Metric: ', platform.metrics)
+            'Select a Metric: ', platform.metrics, index=platform.metrics.index(METRICS[0]))
         optionsNx = [1, 3, 5, 10]
         default_topn = TOP_N.index(3)
         optionNx = st.selectbox(
