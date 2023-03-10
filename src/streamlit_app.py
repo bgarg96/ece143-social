@@ -69,15 +69,6 @@ if __name__ == '__main__':
         st.write("Top "+str(option3)+" influencers for "+option2 +
                 " under " + option1 + " based on " + option4)
 
-<<<<<<< HEAD
-    plt.rcdefaults()
-    fig, ax = plt.subplots()
-    y_pos=range(len(dfs[PRIMARY_KEY]))
-    ax.barh(dfs[PRIMARY_KEY], dfs[option4], align='center')
-    ax.invert_yaxis()  # labels read top-to-bottom
-    ax.set_xlabel("No. of "+option4)
-    st.pyplot(fig)
-=======
 
         plt.rcdefaults()
         fig, ax = plt.subplots()
@@ -142,4 +133,3 @@ if __name__ == '__main__':
         ax.set_xlabel("No. of Aggregated "+optionM2)
         ax.set_xscale('log')
         st.pyplot(fig)
->>>>>>> origin/main

@@ -133,11 +133,7 @@ dmypy.json
 *.xlsx
 
 # .vs folder
-<<<<<<< HEAD
-/.vs
-=======
 .vs/*
->>>>>>> origin/main
 
 # .yaml
 *.yaml
