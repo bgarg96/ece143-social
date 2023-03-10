@@ -110,7 +110,7 @@ def venn_diagram(df_instagram: pd.DataFrame,
     def diff(list1, list2):
         return list(set(list1).symmetric_difference(set(list2)))
     
-    df_countries=pd.DataFrame(it.zip_longest(diff(instagram_countries,common_countries),diff(youtube_countries,common_countries),common_countries),columns=[platform1,platform2,"Both"])
+    df_countries=pd.DataFrame(it.zip_longest(diff(instagram_countries,common_countries),diff(youtube_countries,common_countries),common_countries, fillvalue=""),columns=[platform1,platform2,"Both"])
     venn2(subsets=(insta_unique, youtube_unique,
                    len(common_countries)),
           set_labels=(platform1, platform2),
