@@ -1,6 +1,6 @@
-from collections import Counter, defaultdict
+from collections import defaultdict
 from pathlib import Path
-from typing import Set
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -38,7 +38,9 @@ class Social:
             if column in METRICS:
                 df[column] = df[column].apply(
                     self.value_to_float)
+                df[column] = df[column].fillna(0.0).astype(int)
                 self.metrics.append(column)
+                self.metrics = list(set(self.metrics))
 
         return df
 
@@ -67,7 +69,7 @@ class Social:
         '''
         return list(df[NAME])
 
-    def get_category_items(self, category):
+    def get_category_items(self, category: str, month: Optional[str] = None):
         '''
         gets items pertaining to a category
         param:
@@ -79,16 +81,12 @@ class Social:
         assert(category in self.get_categories()), "inavlid category"
         assert(isinstance(self.df, pd.DataFrame)), "inavlid dataframe"
 
+        df = self.filter_by_month(
+            self.df, month) if month is not None else self.df
         # remove nans
-        self.df[category] = self.df[category].replace(np.nan, 'other')
+        df[category] = df[category].replace(np.nan, 'other')
 
-        # get entries in category
-        subcategories = list(self.df[category])
-
-        # get subcategories
-        subcategories = Counter(subcategories)
-
-        return list(subcategories.keys())
+        return list(df[category].unique())
 
     def get_subcategory_items(self, df, category, subcategory):
         '''
@@ -103,7 +101,8 @@ class Social:
 
         return df[df[category].str.contains(subcategory)]
 
-    def filter_by_month(self, df, month):
+    @staticmethod
+    def filter_by_month(df, month):
         '''
         gets items pertaining to a sub-category
         param:
