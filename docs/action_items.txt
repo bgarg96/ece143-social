@@ -9,3 +9,4 @@ points for presentation
 -filter: influencers with largest growth trend - weighted average 
 -find best country to advertise a certain product - visualization
 -find best country to obtain feedback based on engagement
+-Top losers and top gainers trends
