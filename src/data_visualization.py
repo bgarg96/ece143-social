@@ -8,7 +8,24 @@ import seaborn as sns
 from config import METRICS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
 from matplotlib_venn import venn2, venn2_circles
 from uts import weighted_average
+import random
 
+
+def get_colors(N):
+    """
+    Color generator
+
+    Args:
+        N (int): number of colors required
+
+    Returns:
+        list[str]: list of color hex values
+    """        
+    hexadecimal_alphabets = '0123456789ABCDEF'
+    color = ["#" + ''.join([random.choice(hexadecimal_alphabets) for j in
+    range(6)]) for i in range(N)]
+
+    return color
 
 # line chart
 def line_chart(df_medias_months: pd.DataFrame,
@@ -553,9 +570,9 @@ def plot_histogram(df_media: pd.DataFrame,
     influencer_names = df_media[df_filter].values
     dvar = df_media[metric].values
     plt.bar(influencer_names, dvar)
-    plt.title('Total ' + metric + ' for Top ' + top_n + ' Influencers on ' +
+    plt.title('Total ' + metric + ' for Top ' + str(top_n) + ' Influencers on ' +
                 platform + ' in ' + month + ' 2022', loc='center', fontsize=12)
-    plt.xlabel('Top ' + top_n + ' ' + platform + ' Influencers')
+    plt.xlabel('Top ' + str(top_n) + ' ' + platform + ' Influencers')
     plt.ylabel(metric)
     return figs
 

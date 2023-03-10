@@ -37,8 +37,9 @@ if __name__ == '__main__':
         st.write(filter_product)
         plt.rcdefaults()
         fig, ax = plt.subplots()
+        colors= dv.get_colors(len(filter_product[option]))
         ax.barh(filter_product[option],
-                filter_product[optionx], align='center')
+                filter_product[optionx], align='center', color=colors)
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_xlabel("No. of "+optionx)
         plt.xticks(rotation=90)
@@ -70,8 +71,8 @@ if __name__ == '__main__':
 
         plt.rcdefaults()
         fig, ax = plt.subplots()
-        y_pos = range(len(dfs[PRIMARY_KEY]))
-        ax.barh(dfs[PRIMARY_KEY], dfs[option4], align='center')
+        colors= dv.get_colors(len(dfs[PRIMARY_KEY]))
+        ax.barh(dfs[PRIMARY_KEY], dfs[option4], align='center',color=colors)
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_xlabel("No. of "+option4)
         ax.set_xscale('log')
@@ -98,8 +99,9 @@ if __name__ == '__main__':
 
         plt.rcdefaults()
         fig, ax = plt.subplots()
+        colors= dv.get_colors(len(df_cat[FILTERS[1]]))
         ax.barh(df_cat[FILTERS[1]],
-                df_cat['Aggregated '+optionM], align='center')
+                df_cat['Aggregated '+optionM], align='center',color=colors)
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_xlabel("No. of Aggregated "+optionM)
         ax.set_xscale('log')
@@ -129,8 +131,9 @@ if __name__ == '__main__':
 
         plt.rcdefaults()
         fig, ax = plt.subplots()
+        colors= dv.get_colors(len(df_cat[FILTERS[0]]))
         ax.barh(df_cat[FILTERS[0]],
-                df_cat['Aggregated '+optionM2], align='center')
+                df_cat['Aggregated '+optionM2], align='center',color=colors)
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_xlabel("No. of Aggregated "+optionM2)
         ax.set_xscale('log')
@@ -190,7 +193,6 @@ if __name__ == '__main__':
         'Select N Influencers to display',
         optionsNx,
         index=default_topn)
-        top_n = 10
         df_medias_months = platform.df
         df_medias_weighted_subs = uts.weighted_average(df_medias_months, metric)
         fig_lc=dv.line_chart(df_medias_months, df_medias_weighted_subs, platform=option_platforms,metric=metric,top_n=optionNx)
@@ -215,5 +217,36 @@ if __name__ == '__main__':
         platform_1= pt.Social(platform1)
         platform_2= pt.Social(platform2)
 
-        fig_venn=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2).show()
+        fig_venn=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2)
         st.pyplot(fig_venn)
+
+    # example visualization 9: Histogram
+    st.subheader('Top Influencers vs Subscribers')
+    my_expander8 = st.expander(label='Analysis of Top Influencers vs Subscribers')
+    with my_expander8:
+        
+
+        platform7a = st.selectbox(
+            'Select a Platform: ', PLATFORMS, index=0)
+        
+
+        month_selection7=st.selectbox(
+            'Select a Month : ', MONTHS)
+        
+        platform_7a= pt.Social(platform7a)
+
+        optionsN7 = [1, 3, 5, 10]
+        default_topn7 = TOP_N.index(3)
+        optionN7 = st.selectbox(
+        'Select No. of Influencers to display :',
+        optionsN7,
+        index=default_topn7)
+
+        # histogram example
+        df_filter = PRIMARY_KEY
+        metric7 = 'Subscribers'
+        df7 = platform_7a.df
+        month = 'Dec'
+        platform = 'Instagram'
+        fig_hist=dv.plot_histogram(df7, platform7a, month_selection7, df_filter, metric,top_n=optionN7)
+        st.pyplot(fig_hist)
