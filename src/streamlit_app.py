@@ -180,7 +180,8 @@ if __name__ == '__main__':
 
     # example visualization 6 : Get top countries in a particular category
     st.subheader('Proportions of content consumption in a demographic')
-    my_expander5 = st.expander(label="Proportion of of content consumption in a demographic")
+    my_expander5 = st.expander(
+        label="Proportion of of content consumption in a demographic")
     with my_expander5:
         country_selected = st.selectbox(
             'Choose a ' + FILTERS[0] + " :",
@@ -241,60 +242,36 @@ if __name__ == '__main__':
         platform_1 = pt.Social(platform1)
         platform_2 = pt.Social(platform2)
 
-        fig_venn,df_countries=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2)
+        fig_venn, df_countries = dv.venn_diagram(
+            platform_1.df,
+            platform_2.df,
+            month_selection,
+            platform1,
+            platform2)
         col1, col2 = st.columns(2)
         with col1:
             st.pyplot(fig_venn)
-        with col2:    
+        with col2:
             st.write("Countries on each social media platform")
             st.write(df_countries)
 
-    # # example visualization 9: Histogram
-    # st.subheader('Top Influencers vs Subscribers')
-    # my_expander8 = st.expander(label='Analysis of Top Influencers vs Subscribers')
-    # with my_expander8:
-        
-
-    #     platform7a = st.selectbox(
-    #         'Select a Platform: ', PLATFORMS, index=0)
-        
-
-    #     month_selection7=st.selectbox(
-    #         'Select a Month : ', MONTHS)
-        
-    #     platform_7a= pt.Social(platform7a)
-
-    #     optionsN7 = [1, 3, 5, 10]
-    #     default_topn7 = TOP_N.index(3)
-    #     optionN7 = st.selectbox(
-    #     'Select No. of Influencers to display :',
-    #     optionsN7,
-    #     index=default_topn7)
-
-    #     # histogram example
-    #     df_filter = PRIMARY_KEY
-    #     metric7 = 'Subscribers'
-    #     df7 = platform_7a.df
-    #     fig_hist=dv.plot_histogram(df7, platform7a, month_selection7, df_filter, metric7,top_n=optionN7)
-    #     st.pyplot(fig_hist)
-
-    # # example visualization 10: Heatmap
-    st.subheader('Heatmap analysis of content consumption based on Category and Country ')
-    my_expander9 = st.expander(label='Heatmap analysis of content consumption based on Category and Country ')
+    st.subheader(
+        'Heatmap analysis of content consumption based on Category and Country ')  # noqa: E501
+    my_expander9 = st.expander(
+        label='Heatmap analysis of content consumption based on Category and Country ')  # noqa: E501
     with my_expander9:
-        
 
         platform9a = st.selectbox(
             'Select a Platform: ', PLATFORMS, index=0)
-        
 
-        month_selection9=st.selectbox(
+        month_selection9 = st.selectbox(
             'Select a Month : ', MONTHS)
-        
-        platform_9a= pt.Social(platform9a)
+
+        platform_9a = pt.Social(platform9a)
 
         # histogram example
-        fig_heat=dv.heatmap(platform_9a.filter_by_month (platform_9a.df,month_selection9),
+        fig_heat = dv.heatmap(platform_9a.filter_by_month(
+            platform_9a.df, month_selection9),
             platform9a,
             month_selection9)
         st.pyplot(fig_heat)
