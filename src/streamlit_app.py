@@ -274,3 +274,24 @@ if __name__ == '__main__':
             platform9a,
             month_selection9)
         st.pyplot(fig_heat)
+
+    # top losers and gainers
+    st.subheader('Top losers and gainers')
+    my_expander10 = st.expander(
+        label='Top losers and gainers')
+
+    with my_expander10:
+        platform10a = st.selectbox(
+            '10. Select a Platform', PLATFORMS, index=0)
+        platform_10a = pt.Social(platform10a)
+
+        metric = st.selectbox(
+            '10. Select a Metric ',
+            platform_10a.metrics,
+            index=platform_10a.metrics.index(METRICS[0]))
+
+        # histogram example
+        fig_lg = dv.bi_directional(platform_10a.df,
+                                   platform10a,
+                                   metric)
+        st.pyplot(fig_lg)
