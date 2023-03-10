@@ -22,7 +22,7 @@ def line_chart(df_medias_months: pd.DataFrame, df_medias_weighted_subs: pd.DataF
     platform (type: string): platform selected
     df_filter (type: string): filter selected, if any. df_filter must be a specific country/category if COUNTRY/CATEGORY_1 is chosen
     metric (type: string): metric selected
-    top_n (type: int): number of influencers to display restricted to 1,3,5,10
+    top_n (type: int): number of influencers to display 
 
     requested_media (type: string): which social media platform's information to display
 
@@ -88,9 +88,94 @@ def venn_diagram(df_instagram: pd.DataFrame, df_youtube: pd.DataFrame, months: s
     plt.title('Instagram vs Youtube Number of Different Countries in ' + months + ' 2022')
     return figs
 
-'''
-def bar_influencer_type(df_weighted: pd.DataFrame, platform: str=PLATFORMS[0], df_filter: str='United States') -> plt.figure():
 
+def bar_influencer_type(df_weighted: pd.DataFrame, platform: str=PLATFORMS[0], df_filter: str='United States') -> plt.figure():
+    figs = plt.figure()
+    df_medias = df_weighted['Subscribers_TW_averge']
+    type_of_influencers = ['Nano', 'Micro', 'Macro', 'Mega', 'Celebrities']
+    count_types = [0]*len(type_of_influencers)
+    for influencer_type in type_of_influencers:
+        if influencer_type == 'Nano':
+            count_types[type_of_influencers.index(influencer_type)] = df_medias[df_medias <= 5000].count()
+        elif influencer_type == 'Micro':
+            count_types[type_of_influencers.index(influencer_type)] = df_medias[(df_medias > 5000) & (df_medias <= 20000)].count()
+        elif influencer_type == 'Macro':
+            count_types[type_of_influencers.index(influencer_type)] = df_medias[(df_medias > 20000) & (df_medias <= 100000)].count()
+        elif influencer_type == 'Mega':
+            count_types[type_of_influencers.index(influencer_type)] = df_medias[(df_medias > 100000) & (df_medias <= 1000000)].count()
+        else:
+            count_types[type_of_influencers.index(influencer_type)] = df_medias[df_medias > 1000000].count()
+    plt.bar(type_of_influencers, count_types)
+    plt.title('Distribution of Types of Influencers by Number of Subscribers')
+    plt.xlabel('Types of Influencers')
+    plt.ylabel('Number of Subscribers')
+    return figs
+
+def bar_graph(df_media: pd.DataFrame,
+              platform: str = PLATFORMS[0],
+              month: str = MONTHS[0],
+              df_filter: str = '',
+              metric: str = '') -> plt.figure():
+    '''
+    display bar chart of FILTER independent variable and METRIC dependent variable 
+    param:
+    df_media (type: pd.DataFrame) : FILTERED DataFrame with 2 columns: FILTER, METRIC
+    platform (type: string): platform selected
+    df_filter (type: string): filter selected
+    metric (type: string): metric selected --> represents dependent variable
+
+    output:
+    matplotlib bar chart
+    '''
+
+    # TODO: Test the code
+    # TODO: Check permutations of filter and metric all graph
+
+    figs = plt.figure()
+    sum_dvar = df_media.groupby(df_filter)[metric].sum()
+    num_views = sum_dvar.sort_values(ascending=False).values
+    ivar_names = sum_dvar.sort_values(ascending=False).index
+    figs = plt.figure()
+    plt.bar(ivar_names, num_views)
+    plt.title('Total ' + metric + ' in Each ' + df_filter + ' on ' +
+                platform + ' in ' + month + ' 2022', loc='center', fontsize=12)
+    plt.xlabel(df_filter)
+    plt.ylabel(metric)
+    return figs
+
+def plot_histogram(df_media: pd.DataFrame,
+              platform: str = PLATFORMS[0],
+              month: str = MONTHS[0],
+              df_filter: str = PRIMARY_KEY,
+              metric: str = '', 
+              top_n: int=TOP_N[-1]) -> plt.figure():
+
+    '''
+    display bar chart histogram of METRIC dependent variable for top TOP_N influencers 
+    param:
+    df_media (type: pd.DataFrame) : FILTERED DataFrame with 2 columns: PRIMARY_KEY, METRIC
+    platform (type: string): platform selected
+    df_filter (type: string): PRIMARY_KEY with all influencer names
+    metric (type: string): metric selected --> represents dependent variable
+    top_n (type: int): number of influencers to display
+
+    output:
+    matplotlib bar chart
+    '''
+
+    figs = plt.figure()
+    assert df_filter == PRIMARY_KEY
+    df_media = df_media.sort_values(by=[metric], ascending=False).head(top_n)
+    influencer_names = df_media[df_filter].values
+    dvar = df_media[metric].values
+    plt.bar(influencer_names, dvar)
+    plt.title('Total ' + metric + ' for Top ' + top_n + ' Influencers on ' +
+                platform + ' in ' + month + ' 2022', loc='center', fontsize=12)
+    plt.xlabel('Top ' + top_n + ' ' + platform + ' Influencers')
+    plt.ylabel(metric)
+    return figs
+
+"""
 def bar_InfluencersvFollowers(df_top_instagram,
                               df_top_youtube,
                               df_top_tiktok,
@@ -311,6 +396,7 @@ def bar_CategoryvInfluencers(df_instagram: pd.DataFrame,
         plt.ylabel('Number of Influencers')
     return figs
 
+"""
 
 def heatmap(df_media: pd.DataFrame,
             platform: str = PLATFORMS[0],
@@ -389,7 +475,6 @@ def pie_chart(df_media: pd.DataFrame,
     df_filter: independent variable for pie chart
     metric: a single country if filter == 'Country',
             any METRICS value if filter == 'Category_1'
-            (including 'AccountName')
     category: a single category if filter == 'Category' from the dataframe
 
     output:
@@ -426,9 +511,9 @@ def pie_chart(df_media: pd.DataFrame,
             category_divisions = highest_divisions
         explode = np.zeros(len(category_labels))
         max_val = max(category_divisions)
-        max_idx = np.where(category_divisions == max_val)
+        max_idx = list(np.where(category_divisions == max_val))
         explode[max_idx] = 0.1
-        plt.pie(category_divisions, labels=category_labels, explode=explode)
+        plt.pie(category_divisions, labels=category_labels, explode=explode, autopct='%1.0f%%', pctdistance=1.1, labeldistance=1.2)
         plt.title(metric)
         plt.suptitle(f"Demographic Division of Product Category by\
             Number of Influencers on {platform} in {month} 2022")
@@ -440,12 +525,25 @@ def pie_chart(df_media: pd.DataFrame,
             .loc[df_platform[df_filter] == category]
         group = df_filtered_category.groupby(PRIMARY_KEY)
         metric_df = group.apply(lambda x: x[metric].unique())
-        metric_divisions = metric_df.values
-        metric_labels = metric_df.index
+        metric_divisions = list(metric_df.values)
+        metric_labels = list(metric_df.index)
         assert len(metric_labels) == len(metric_divisions)
+        if len(metric_labels) > 6:
+            sorted_idx = [b[0] for b in sorted(
+                enumerate(metric_divisions), key=lambda i:i[1])]
+            sorted_labels = []
+            for i in sorted_idx:
+                sorted_labels.append(metric_labels[i])
+            metric_labels = sorted_labels[-6:]
+            metric_labels.insert(0, 'Other')
+            sort_category_divisions = sorted(metric_divisions)
+            highest_divisions = sort_category_divisions[-6:]
+            other_vals = sum(sort_category_divisions[:-6])
+            highest_divisions.insert(0, other_vals)
+            metric_divisions = highest_divisions
         explode = np.zeros(len(metric_divisions))
         max_val = max(metric_divisions)
-        max_idx = np.where(metric_divisions == max_val)
+        max_idx = list(np.where(metric_divisions == max_val))
         explode[max_idx] = 0.1
         plt.pie(metric_divisions, labels=metric_labels, explode=explode)
         plt.title(category)
@@ -453,15 +551,10 @@ def pie_chart(df_media: pd.DataFrame,
                      {metric} on {platform} in {month} 2022")
     return figs
 
-
+instagram = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
+pie_chart(instagram, PLATFORMS[0], 'Dec', 'Category_1', 'Subscribers', 'Music').show()
 
 ############# TESTING ################
-instagram = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
-youtube = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Youtube/Youtube_Dec.csv')
-
-
-
-
 if __name__ == '__main__':
     platform = pt.Social('Instagram')
     df_medias_months = platform.load_dfs('Instagram')
@@ -475,4 +568,11 @@ if __name__ == '__main__':
     # line_chart(df_medias_months, df_medias_weighted_subs, platform='Instagram').show()
     venn_diagram(instagram, youtube, 'Dec','Country').show()
     pie_chart(instagram, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
-    print()
+    instagram = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')[['Category_1', 'EngagementAverage']]
+    bar_graph(instagram, df_filter='Category_1', metric='EngagementAverage').show()
+    pie_chart(instagram, PLATFORMS[0], 'Dec', 'Category_1', 'Subscribers', 'Music').show()
+    youtube = pd.read_csv('C:/Users/forMED Technologies/Documents/Github/ece143-social/data/Youtube/Youtube_Dec.csv')
+    platform = pt.Social('Instagram')
+    df_medias_months = platform.load_dfs('Instagram')
+    df_medias_weighted_subs = weighted_average(df_medias_months, 'Subscribers')
+    bar_influencer_type(df_medias_weighted_subs).show()
