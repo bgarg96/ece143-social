@@ -2,7 +2,7 @@ from typing import List, Set
 
 import pandas as pd
 
-PLATFORMS = ['Instagram', 'Youtube', 'TikTok']
+PLATFORMS = ['Instagram', 'Youtube']
 MONTHS: List[str] = ['Sep', 'Oct', 'Nov', 'Dec']
 PRIMARY_KEY: str = 'AccountName'
 MONTHS_DTYPE: pd.CategoricalDtype = pd.CategoricalDtype(

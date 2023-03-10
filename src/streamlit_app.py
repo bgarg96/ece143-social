@@ -253,3 +253,24 @@ if __name__ == '__main__':
     #     df7 = platform_7a.df
     #     fig_hist=dv.plot_histogram(df7, platform7a, month_selection7, df_filter, metric7,top_n=optionN7)
     #     st.pyplot(fig_hist)
+
+    # # example visualization 10: Heatmap
+    st.subheader('Heatmap analysis of content consumption based on Category and Country ')
+    my_expander9 = st.expander(label='Heatmap analysis of content consumption based on Category and Country ')
+    with my_expander9:
+        
+
+        platform9a = st.selectbox(
+            'Select a Platform: ', PLATFORMS, index=0)
+        
+
+        month_selection9=st.selectbox(
+            'Select a Month : ', MONTHS)
+        
+        platform_9a= pt.Social(platform9a)
+
+        # histogram example
+        fig_heat=dv.heatmap(platform_9a.filter_by_month (platform_9a.df,month_selection9),
+            platform9a,
+            month_selection9)
+        st.pyplot(fig_heat)
