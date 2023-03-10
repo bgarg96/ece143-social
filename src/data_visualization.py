@@ -465,7 +465,7 @@ def pie_chart(df_media: pd.DataFrame,
         explode = np.zeros(len(metric_divisions))
         max_val = max(metric_divisions)
         max_idx = list(np.where(metric_divisions == max_val))
-        explode[max_idx[0][0]] = 0.1
+        explode[max_idx[0]] = 0.1
         plt.pie([arr[0] for arr in metric_divisions], labels=metric_labels, explode=explode,autopct='%1.0f%%', pctdistance=1.1, labeldistance=1.2)
         plt.title(category)
         plt.suptitle(f"Product Category Division of Influencers by\
