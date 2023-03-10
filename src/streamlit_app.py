@@ -3,6 +3,8 @@ import streamlit as st
 
 import platforms as pt
 from config import FILTERS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
+import data_visualization as dv
+import uts
 
 if __name__ == '__main__':
 
@@ -133,3 +135,63 @@ if __name__ == '__main__':
         ax.set_xlabel("No. of Aggregated "+optionM2)
         ax.set_xscale('log')
         st.pyplot(fig)
+
+
+    # example visualization 5 : Media Capture of Influencers for a Category
+    st.subheader('Media Capture of Influencers for a Category')
+    my_expander4 = st.expander(label="Find top influencers for a category based on total % of influence")
+    with my_expander4:
+        option_selected = st.selectbox('Choose a '+ FILTERS[1]+ " :",
+                               platform.get_category_items(FILTERS[1]))
+        
+        optionM3 = st.selectbox(
+            'Select a Metric :', platform.metrics)
+
+        # N and metric slection needed 
+        filter_df_month= platform.filter_by_month(platform.df,month=option_months)
+        fig_pie=dv.pie_chart(filter_df_month,
+              option_platforms,
+              option_months,
+              FILTERS[1], metric=optionM3,
+              category=option_selected
+             )
+        
+        st.pyplot(fig_pie)
+
+
+    # example visualization 6 : Get top countries in a particular category
+    st.subheader('Proportion of influencer in each category in a demographic')
+    my_expander5 = st.expander(label="Proportion of influencer in each category in a demographic")
+    with my_expander5:
+        country_selected = st.selectbox('Choose a '+ FILTERS[0]+ " :",
+                               platform.get_category_items(FILTERS[0]))
+
+        filter_df_month= platform.filter_by_month(platform.df,month=option_months)
+        fig_pie2=dv.pie_chart(filter_df_month,
+              option_platforms,
+              option_months,
+              FILTERS[0],
+              country_selected,
+              ""
+             )
+        
+        st.pyplot(fig_pie2)
+
+    # example visualization 7 Line chart
+    st.subheader('Top Influencers Trends')
+    my_expander6 = st.expander(label='Top Influencers Trends')
+    with my_expander6:
+        
+        metric = st.selectbox(
+            'Select a Metric: ', platform.metrics)
+        optionsNx = [1, 3, 5, 10]
+        default_topn = TOP_N.index(3)
+        optionNx = st.selectbox(
+        'Select N Influencers to display',
+        optionsNx,
+        index=default_topn)
+        top_n = 10
+        df_medias_months = platform.df
+        df_medias_weighted_subs = uts.weighted_average(df_medias_months, metric)
+        fig_lc=dv.line_chart(df_medias_months, df_medias_weighted_subs, platform=option_platforms,metric=metric,top_n=optionNx)
+        st.pyplot(fig_lc)
