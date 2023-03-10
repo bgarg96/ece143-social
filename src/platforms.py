@@ -1,6 +1,5 @@
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Set
 
 import numpy as np
 import pandas as pd
@@ -38,7 +37,9 @@ class Social:
             if column in METRICS:
                 df[column] = df[column].apply(
                     self.value_to_float)
+                df[column] = df[column].fillna(0.0).astype(int)
                 self.metrics.append(column)
+                self.metrics = list(set(self.metrics))
 
         return df
 
