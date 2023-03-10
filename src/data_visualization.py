@@ -65,7 +65,7 @@ def line_chart(df_medias_months: pd.DataFrame,
 
 def venn_diagram(df_instagram: pd.DataFrame,
                  df_youtube: pd.DataFrame,
-                 months: str = MONTHS[0]) -> plt.figure():
+                 months: str = MONTHS[0], platform1="Instagram", platform2="Youtube") -> plt.figure():
     '''
     display venn diagram comparing and contrasting countries
         for instagram and youtube
@@ -91,16 +91,17 @@ def venn_diagram(df_instagram: pd.DataFrame,
     figs = plt.figure()
     venn2(subsets=(insta_unique, youtube_unique,
                    len(common_countries)),
-          set_labels=('Instagram', 'Youtube'),
+          set_labels=(platform1, platform2),
           set_colors=('b', 'r'),
           alpha=0.5)
     venn2_circles(
         subsets=(insta_unique,
                  youtube_unique,
                  len(common_countries)))
+    
+
     plt.title(
-        f"Instagram vs Youtube Number \
-            of Different Countries in {months} 2022")
+        f"Instagram vs Youtube Number of Different Countries in {months} 2022")
     return figs
 
 

@@ -5,7 +5,7 @@ import platforms as pt
 from config import FILTERS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N, METRICS
 import data_visualization as dv
 import uts
-
+st.set_option('deprecation.showPyplotGlobalUse', False)
 if __name__ == '__main__':
 
     st.title('Social Media Influencers Analysis for Businesses')
@@ -195,3 +195,25 @@ if __name__ == '__main__':
         df_medias_weighted_subs = uts.weighted_average(df_medias_months, metric)
         fig_lc=dv.line_chart(df_medias_months, df_medias_weighted_subs, platform=option_platforms,metric=metric,top_n=optionNx)
         st.pyplot(fig_lc)
+
+
+    # example visualization 8 Line chart
+    st.subheader('Analysis of Influencer demograhics')
+    my_expander7 = st.expander(label='Analysis of Influencer demograhics across platforms')
+    with my_expander7:
+        
+
+        platform1 = st.selectbox(
+            'Select Platform 1: ', PLATFORMS, index=0)
+        
+        platform2 = st.selectbox(
+        'Select Platform 2: ', PLATFORMS,index=1)
+
+        month_selection=st.selectbox(
+            'Select Month : ', MONTHS)
+        
+        platform_1= pt.Social(platform1)
+        platform_2= pt.Social(platform2)
+
+        fig_venn=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2).show()
+        st.pyplot(fig_venn)
