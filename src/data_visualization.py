@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import itertools as it
 
 from config import METRICS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
 from matplotlib_venn import venn2, venn2_circles
@@ -106,6 +107,10 @@ def venn_diagram(df_instagram: pd.DataFrame,
     youtube_unique = len(youtube_countries) - len(common_countries)
     assert youtube_unique >= 0
     figs = plt.figure()
+    def diff(list1, list2):
+        return list(set(list1).symmetric_difference(set(list2)))
+    
+    df_countries=pd.DataFrame(it.zip_longest(diff(instagram_countries,common_countries),diff(youtube_countries,common_countries),common_countries),columns=[platform1,platform2,"Both"])
     venn2(subsets=(insta_unique, youtube_unique,
                    len(common_countries)),
           set_labels=(platform1, platform2),
@@ -119,7 +124,7 @@ def venn_diagram(df_instagram: pd.DataFrame,
 
     plt.title(
         f"Instagram vs Youtube Number of Different Countries in {months} 2022")
-    return figs
+    return figs,df_countries
 
 
 def bar_InfluencersvFollowers(df_top_instagram,
@@ -442,7 +447,7 @@ def pie_chart(df_media: pd.DataFrame,
             for i in sorted_idx:
                 sorted_labels.append(category_labels[i])
             category_labels = sorted_labels[-6:]
-            category_labels.insert(0, 'Other')
+            category_labels.insert(0, 'Misc')
             sort_category_divisions = sorted(category_divisions)
             highest_divisions = sort_category_divisions[-6:]
             other_vals = sum(sort_category_divisions[:-6])
@@ -454,8 +459,7 @@ def pie_chart(df_media: pd.DataFrame,
         explode[max_idx] = 0.1
         plt.pie(category_divisions, labels=category_labels, explode=explode, autopct='%1.0f%%', pctdistance=1.1, labeldistance=1.2)
         plt.title(metric)
-        plt.suptitle(f"Demographic Division of Product Category by\
-            Number of Influencers on {platform} in {month} 2022")
+        plt.suptitle(f"Content consumption in a demographic on {platform} in {month} 2022")
     else:
         assert metric in METRICS
         assert category != ''
@@ -486,8 +490,7 @@ def pie_chart(df_media: pd.DataFrame,
         explode[max_idx[0]] = 0.1
         plt.pie([arr[0] for arr in metric_divisions], labels=metric_labels, explode=explode,autopct='%1.0f%%', pctdistance=1.1, labeldistance=1.2)
         plt.title(category)
-        plt.suptitle(f"Product Category Division of Influencers by\
-                        {metric} on {platform} in {month} 2022")
+        plt.suptitle(f"Media capture of Influencers based on {metric} on {platform} in {month} 2022")
     return figs
 
 def bar_influencer_type(df_weighted: pd.DataFrame, platform: str=PLATFORMS[0], df_filter: str='United States') -> plt.figure():

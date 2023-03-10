@@ -72,10 +72,10 @@ if __name__ == '__main__':
         plt.rcdefaults()
         fig, ax = plt.subplots()
         colors= dv.get_colors(len(dfs[PRIMARY_KEY]))
-        ax.barh(dfs[PRIMARY_KEY], dfs[option4], align='center',color=colors)
-        ax.invert_yaxis()  # labels read top-to-bottom
-        ax.set_xlabel("No. of "+option4)
-        ax.set_xscale('log')
+        ax.bar( dfs[PRIMARY_KEY],dfs[option4], align='center',color=colors)
+        #ax.invert_yaxis()  # labels read top-to-bottom
+        ax.set_ylabel("No. of "+option4)
+        ax.set_yscale('log')
         st.pyplot(fig)
 
     # example visualization 3 : Get top categories in a particular country
@@ -163,8 +163,8 @@ if __name__ == '__main__':
 
 
     # example visualization 6 : Get top countries in a particular category
-    st.subheader('Proportion of influencer in each category in a demographic')
-    my_expander5 = st.expander(label="Proportion of influencer in each category in a demographic")
+    st.subheader('Proportions of content consumption in a demographic')
+    my_expander5 = st.expander(label="Proportion of of content consumption in a demographic")
     with my_expander5:
         country_selected = st.selectbox('Choose a '+ FILTERS[0]+ " :",
                                platform.get_category_items(FILTERS[0]))
@@ -217,36 +217,39 @@ if __name__ == '__main__':
         platform_1= pt.Social(platform1)
         platform_2= pt.Social(platform2)
 
-        fig_venn=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2)
-        st.pyplot(fig_venn)
+        fig_venn,df_countries=dv.venn_diagram(platform_1.df, platform_2.df, month_selection,platform1,platform2)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.pyplot(fig_venn)
+        with col2:    
+            st.write("Countries on each social media platform")
+            st.write(df_countries)
 
-    # example visualization 9: Histogram
-    st.subheader('Top Influencers vs Subscribers')
-    my_expander8 = st.expander(label='Analysis of Top Influencers vs Subscribers')
-    with my_expander8:
+    # # example visualization 9: Histogram
+    # st.subheader('Top Influencers vs Subscribers')
+    # my_expander8 = st.expander(label='Analysis of Top Influencers vs Subscribers')
+    # with my_expander8:
         
 
-        platform7a = st.selectbox(
-            'Select a Platform: ', PLATFORMS, index=0)
+    #     platform7a = st.selectbox(
+    #         'Select a Platform: ', PLATFORMS, index=0)
         
 
-        month_selection7=st.selectbox(
-            'Select a Month : ', MONTHS)
+    #     month_selection7=st.selectbox(
+    #         'Select a Month : ', MONTHS)
         
-        platform_7a= pt.Social(platform7a)
+    #     platform_7a= pt.Social(platform7a)
 
-        optionsN7 = [1, 3, 5, 10]
-        default_topn7 = TOP_N.index(3)
-        optionN7 = st.selectbox(
-        'Select No. of Influencers to display :',
-        optionsN7,
-        index=default_topn7)
+    #     optionsN7 = [1, 3, 5, 10]
+    #     default_topn7 = TOP_N.index(3)
+    #     optionN7 = st.selectbox(
+    #     'Select No. of Influencers to display :',
+    #     optionsN7,
+    #     index=default_topn7)
 
-        # histogram example
-        df_filter = PRIMARY_KEY
-        metric7 = 'Subscribers'
-        df7 = platform_7a.df
-        month = 'Dec'
-        platform = 'Instagram'
-        fig_hist=dv.plot_histogram(df7, platform7a, month_selection7, df_filter, metric,top_n=optionN7)
-        st.pyplot(fig_hist)
+    #     # histogram example
+    #     df_filter = PRIMARY_KEY
+    #     metric7 = 'Subscribers'
+    #     df7 = platform_7a.df
+    #     fig_hist=dv.plot_histogram(df7, platform7a, month_selection7, df_filter, metric7,top_n=optionN7)
+    #     st.pyplot(fig_hist)
