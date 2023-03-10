@@ -609,16 +609,14 @@ def plot_histogram(df_media: pd.DataFrame,
 
 
 def bi_directional(df_medias_months: pd.DataFrame,
-                   platform: str = PLATFORMS[0],
-                   df_filter: str = '',
-                   metric: str = 'Subscribers'):
+                   platform: str,
+                   metric: str):
     '''
     display bi-directional bar chart histogram of 5 gain and
     losses from Sep to Dec of METRIC dependent variable for influencers
     param:
     df_media_months: DF from platform.load_dfs(PLATFORM)
     platform: platform selected
-    df_filter: FILTER selected
     metric: metric selected --> represents dependent variable
     output:
     matplotlib bar chart
@@ -633,7 +631,7 @@ def bi_directional(df_medias_months: pd.DataFrame,
         [PRIMARY_KEY, metric]]
     diff_months = all_last_months.set_index(PRIMARY_KEY).subtract(
         all_first_months.set_index(PRIMARY_KEY), fill_value=0)
-    sorted_diffs = diff_months.sort_values(by=['Subscribers'],
+    sorted_diffs = diff_months.sort_values(by=[metric],
                                            ascending=False)
     gains = sorted(sorted_diffs.values[:5])
     gain_accounts = list(sorted_diffs.index[:5])
@@ -645,14 +643,9 @@ def bi_directional(df_medias_months: pd.DataFrame,
     plt.barh(xvals, yvals.T[0], color=colors)
     plt.xlabel(metric)
     plt.ylabel(PRIMARY_KEY)
-    if df_filter != '':
-        plt.title('2022 Top 5 ' + metric +
-                  ' Gain and Loss of Influencers on ' +
-                  platform + ' in ' + df_filter)
-    else:
-        plt.title('Top 5 ' + metric +
-                  ' Gain and Loss of Influencers on ' +
-                  platform + ' in 2022')
+    plt.title('Top 5 ' + metric +
+              ' Gain and Loss of Influencers on ' +
+              platform + ' in 2022')
 
     return figs
 
