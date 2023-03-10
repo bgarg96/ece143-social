@@ -79,10 +79,9 @@ if __name__ == '__main__':
         plt.rcdefaults()
         fig, ax = plt.subplots()
         colors = dv.get_colors(len(dfs[PRIMARY_KEY]))
-        ax.barh(dfs[PRIMARY_KEY], dfs[option4], align='center', color=colors)
-        ax.invert_yaxis()  # labels read top-to-bottom
-        ax.set_xlabel("No. of "+option4)
-        ax.set_xscale('log')
+        ax.bar(dfs[PRIMARY_KEY], dfs[option4], align='center', color=colors)
+        ax.set_ylabel(option4)
+        ax.set_yscale('log')
         st.pyplot(fig)
 
     # example visualization 3 : Get top categories in a particular country
