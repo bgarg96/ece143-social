@@ -75,43 +75,9 @@ def line_chart(df_social_medias_time: pd.DataFrame, requested_media='Instagram',
    plt.ylabel('Subscribers')
    plt.title('Subscribers by Month')
    plt.legend(N_Names)
+   plt.legend(N_Names, bbox_to_anchor=(0.35, 1.0),
    plt.show()
 
-   # plt.plot(df_social_medias_time['Name'], df_social_medias_time['Subscribers'])
-   # plt.xlabel('Year')
-   # plt.ylabel('Sales')
-   # plt.title('Sales by Year')
-   # plt.show()
-
-   # platform_options = ['Instagram', 'TikTok', 'Youtube']
-   # if '&' in requested_media:
-   #    and_idx = requested_media.index('&')
-   #    first_media = requested_media[0:and_idx-1]
-   #    second_media = requested_media[and_idx+2:]
-   #    platform_options = [i for i in platform_options if i == first_media or i == second_media]
-   # elif requested_media != 'All':
-   #    platform_options = requested_media
-   # palette = plt.get_cmap('Set1')
-   # fig_count = 0
-   # figs = {}
-   # for platform in platform_options:
-   #    df_platform = df_social_medias_time.loc[df_social_medias_time['Country'] == platform]
-   #    num = 0
-   #    figs[fig_count] = plt.figure(fig_count)
-   #    for influencer_name in df_platform['Name']:
-   #       all_influencer_subs = df_platform.loc[df_platform['Name'] == influencer_name]
-   #       subs_vals = df_platform[list(all_influencer_subs.iloc[:, 2:]).to_numpy()][0]
-   #       months = np.array(df_platform.iloc[:, 2:].keys())
-   #       num+=1
-   #       figs[fig_count] = plt.subplot(5,2,num) # hard-coded 10
-   #       plt.plot(months, subs_vals, marker='o', markersize=12, color=palette(num), linewidth=2.0, alpha=0.9)
-   #       plt.xticks(range(len(subs_vals)), months)
-   #       plt.title(influencer_name + ' Following in 2022', loc='left', fontsize=12, fontweight=0, color=palette(num))
-   #    plt.suptitle(platform + 'Top Influencers Following in 2022')
-   #    plt.text(0.5, 0.02, 'Time', ha='center', va='center')
-   #    plt.text(0.06, 0.5, 'Number of Followers', ha='center', va='center', rotation='vertical')
-   #    fig_count += 1
-   # return figs
 
 def venn_diagram(df_instagram: pd.DataFrame, df_youtube: pd.DataFrame, months: str=MONTHS[0], df_filter: str='Country') -> plt.figure():
     ''''
@@ -333,7 +299,6 @@ def heatmap(df_media: pd.DataFrame, platform: str=PLATFORMS[0], month: str=MONTH
     df_media (type: pd.DataFrame) : UNFILTERED DataFrame of selected PLATFORM and MONTH
     platform (type: string): platform selected
     month (type: string): month selected
-
     output:
     seaborn heat map
     '''
@@ -502,7 +467,7 @@ def social_medias_time_filepath(platformtype = 'Instagram'):
 
 
 
-filepath = social_medias_time_filepath('Youtube')
+filepath = social_medias_time_filepath('Instagram')
 df_social_medias_time = pd.read_csv(filepath)
 
 # instagram_dec = pd.read_csv('/Users/nicky/Documents/Github/ece143-social/data/Instagram/Instagram_Dec.csv')
@@ -510,4 +475,4 @@ df_social_medias_time = pd.read_csv(filepath)
 # pie_chart(instagram_dec, PLATFORMS[0], 'Dec', 'Country', 'United States').show()
 # venn_diagram(instagram_dec, youtube_dec, 'Dec','Country').show()
 
-line_chart(df_social_medias_time, 'Instagram','Country',6)
+line_chart(df_social_medias_time, 'Instagram','Country',4)
