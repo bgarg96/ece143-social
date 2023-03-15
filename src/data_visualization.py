@@ -184,7 +184,6 @@ def heatmap(df_media: pd.DataFrame,
             row += 1
         new_df[country] = df_vals
         col += 1
-    # TODO : get names to appear neatly on heatmap
     ax = sns.heatmap(new_df, fmt='', cbar_kws={'label': 'log10'}, vmin=6, vmax=8)
     c_bar = ax.collections[0].colorbar
     c_bar.set_ticks([6, 6.7, 7, 7.5, 8])
@@ -304,9 +303,6 @@ def bar_graph(df_media: pd.DataFrame,
     output:
     matplotlib bar chart
     '''
-
-    # TODO: Test the code
-    # TODO: Check permutations of filter and metric all graph
 
     figs = plt.figure()
     sum_dvar = df_media.groupby(df_filter)[metric].sum()
