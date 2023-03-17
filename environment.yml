@@ -96,7 +96,6 @@ dependencies:
   - matplotlib=3.7.1=py39h6e9494a_0
   - matplotlib-base=3.7.1=py39hb2f573b_0
   - matplotlib-inline=0.1.6=pyhd8ed1ab_0
-  - matplotlib-venn=0.11.9=pyhd8ed1ab_0
   - mdurl=0.1.0=pyhd8ed1ab_0
   - munkres=1.1.4=pyh9f0ad1d_0
   - nbformat=5.7.3=pyhd8ed1ab_0
