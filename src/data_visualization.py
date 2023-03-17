@@ -9,6 +9,7 @@ import seaborn as sns
 
 from config import METRICS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
 from uts import weighted_average
+from matplotlib_venn import venn2, venn2_circles
 
 
 def get_colors(N):
@@ -57,7 +58,7 @@ def line_chart(df_medias_months: pd.DataFrame,
     output:
     matplotlib line chart
     '''
-    figs = plt.figure()
+    figs,ax = plt.subplots()
     df_medias_weighted_subs = df_medias_weighted_subs.sort_values(
         by=[f"{metric}_TW_averge"], ascending=False).head(top_n)
     for influencer_name in df_medias_weighted_subs[PRIMARY_KEY]:
@@ -65,12 +66,11 @@ def line_chart(df_medias_months: pd.DataFrame,
                                                == influencer_name]
         months = all_influencers['Month'].tolist()
         subs_vals = all_influencers[metric].tolist()
-        plt.plot(months, subs_vals, marker='o', markersize=8, linewidth=2.0)
+        ax.plot(months, subs_vals, marker='o', markersize=8, linewidth=2.0)
         plt.xlabel('Month')
         plt.ylabel('Number of ' + metric)
     plt.xticks(range(4), MONTHS)
     plt.yscale('log')
-    plt.legend(df_medias_weighted_subs[PRIMARY_KEY], loc='upper right')
     if df_filter == '':
         plt.title('2022 ' + platform + " Top Influencers' " +
                   metric + ' in the World')
@@ -79,6 +79,7 @@ def line_chart(df_medias_months: pd.DataFrame,
                   metric + ' in ' + df_filter)
 
     figs.tight_layout(pad=100.0)
+    ax.legend(df_medias_weighted_subs[PRIMARY_KEY],loc='center left',bbox_to_anchor=(1, 0.5))
     return figs
 
 def bar_InfluencersvFollowers(df_top_instagram,
@@ -548,6 +549,7 @@ def plot_histogram(df_media: pd.DataFrame,
               fontsize=12)
     plt.xlabel('Top ' + str(top_n) + ' ' + platform + ' Influencers')
     plt.ylabel(metric)
+    plt.xticks(rotation=90)
     return figs
 
 
@@ -592,6 +594,38 @@ def bi_directional(df_medias_months: pd.DataFrame,
 
     return figs
 
+# venn diagram
+def venn_diagram(df_instagram: pd.DataFrame, df_youtube: pd.DataFrame, months: str=MONTHS[0]) -> plt.figure():
+    '''
+    display venn diagram comparing and contrasting countries
+        for instagram and youtube
+    param:
+    df_instagram (type: pd.DataFrame) : UNFILTERED DataFrame of instagram data
+    df_youtube (type: pd.DataFrame) : UNFILTERED DataFrame of youtube data
+    month (type: string): month selected
+
+    output:
+    matplotlib_venn venn diagram
+    '''
+    # TODO: Test the code
+    # TODO: Allow DataFrame input to not be filtered by a certain metric
+    # TODO: Produce 4 plots for all months, if requested
+
+    df_filter = 'Country'
+    instagram_countries = df_instagram[df_filter].dropna().unique()
+    youtube_countries = df_youtube[df_filter].dropna().unique()
+
+    # determine common countries for middle of venn
+    common_countries = np.intersect1d(instagram_countries, youtube_countries)
+    insta_unique = len(instagram_countries) - len(common_countries)
+    assert insta_unique >= 0
+    youtube_unique = len(youtube_countries) - len(common_countries)
+    assert youtube_unique >= 0
+    figs = plt.figure()
+    venn2(subsets=(insta_unique, youtube_unique, len(common_countries)), set_labels=('Instagram', 'Youtube'), set_colors=('b', 'r'), alpha = 0.5)
+    venn2_circles(subsets=(insta_unique, youtube_unique, len(common_countries)))
+    plt.title('Instagram vs Youtube Number of Different Countries in ' + months + ' 2022')
+    return figs
 
 if __name__ == '__main__':
     platform = pt.Social('Instagram')
