@@ -7,16 +7,13 @@
    - [Datasets](#Datasets)
    - [Source Code](#SourceCode)
    - [Jupyter Notebook](#JupyterNotebook)
-   - [Graphs](#Graphs)
 3. [Third Party Modules](#ThirdPartymodules)
 4. [Implementation](#Implementation)
 5. [Presentation](#Presentation)
 
 ## Project Overview
-
-Social media and influencing is $15B market.
-
-
+Our proposed problem statement is to assess the efficacy of social media influencers as a marketing medium for businesses. We propose to study, analyze and predict which social media platform is most effective for a particular business segment and which influencers provide the best marketing reach for a given type of product in a particular demographic.
+In this project we plan to do an exploratory data analysis of statistics of recent social media influencers, social media platforms and key attributes that help identify the best influencer, social media platform and type of content for a particular product to be marketed in a given demographic. We propose to analyze trends such as views, comments, likes on various social media platforms that can act as key indicators of the marketing reach of a particular influencer and predict the best influencer for various businesses. We will present visualizations into top influencers for a given demographic and type of product. 
 
 ## Repository Structure
       root
@@ -56,92 +53,52 @@ Social media and influencing is $15B market.
                
 
 ### Datasets
+We use the following dataset: https://www.kaggle.com/datasets/ramjasmaurya/top-1000-social-media-channels.
+The dataset contains information regarding different social media platforms, the influencers on them, the type of content they promote, subscribers, viewer, comment and like count, demographic information. 
 
-The `data/` folder contains:
+The `data` folder contains:
 
 - [Instagram/Instagram_*month*.csv](data/Instagram/) contains all the pre-processed csv's for Instagram
 - [Youtube/Youtube_*month*.csv](data/Youtube/) contains all the pre-processed csv's for Youtube
-
-
-
+- [TikTok/TikTok_*month*.csv](data/TikTok/) contains all the pre-processed csv's for TikTok
 
 ### Source Code
 
 Linting: All code that's pushed to main goes linting checks. We recommend everyone to install pre-commit hooks, so that any commit is lint - approved. The linting config file is [.pre-commit-config.yaml](.pre-commit-config.yaml).
 
-To install
-
-Source code for all data scraping and data analysis files are within the `src/` folder. [Link to Folder](src/)
-
-Data scraping files:
-
-- [wsBids.py](src/wsBids.py) is the web scraper
-
-Pre-Processing files:
-
-- [dataframe.py](src/dataframe.py) - Return a class object to load any dataset as a d_frame.
-- [load_datasets.py](src/load_datasets.py) - Loads datasets using dataframe class.
-
-Data processing files:
-
-- [batsman_stats.py](src/batsman_stats.py) - Obtains basic batsman stats from the data.
-- [player_performance.py](src/player_performance.py) - Collates player statistics to plot graphs.
-- [bid_VS_performance.py](src/bid_VS_performance.py) - Calculate teams W:L ratio and total auction spending per year and plot their graph.
-- [bowler_stats.py](src/bowler_stats.py) - Extracts bowler statistics for the given bowler
-- [innings.py](src/innings.py) - Extracts information about bowlers given a match and innings
-- [data_process.py](src/data_process.py) - Helper class to read and process the CSV files
-- [city_toss_winner.py](src/city_toss_winner.py) - Derives relation between the city and toss winning ratios
-- [team_toss_winner.py](src/team_toss_winner.py) - Determines a co relation between team winner Vs toss winner of a match.
-- [tosswiner_choice.py](src/team_toss_winner.py) - Estimates the best inning choice for each team given they win the toss.
+The src directory has all the source code:
+ - config.py : has all the configurable variables for the dataset configuration.
+ - data_visualization.py : contains all the datavisualization functions. These functions use an input dataframe and output plots.
+ - platforms.py : contains the social media class and methods to process and filter data.
+ - streamlit_app.py : contains the webapp code and UI bindings to back-end.
+ - uts.py : contains utility helper functions for backend logic.
 
 ### Jupyter Notebook
 
 The [Jupyter Notebook](src/plot_support_book.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
 
-### Graphs
-
-The [`Graphs`](graphs/) folder has images as `.png` of all the analysis plots computed.
-
 ## Third Party Modules
 
-The third party modules used are as listed below. They are included as [`requirements.txt`](requirements.txt).
+The third party modules used are as listed below.
 
-- requests
 - numpy
 - pandas
 - jupyter
 - matplotlib
 - seaborn
-- BeautifulSoup
+- streamlit
+- matplotlib_venn
 
 ## Pre Processing
 The CSVs are processed to have uniform column names across platform for easy modularization.
 
 ## Implementation
 
-We used a conda virtual environment with the 3.9.13 python version to work on.
-Make sure you are set up to use Python version - 3.9.13
+We used a conda virtual environment with the 3.9.6 python version to work on.
+Make sure you are set up to use Python version - 3.9.6
 
-Install all required libraries -
-
-```
-pip install -r requirements.txt
-```
-
-Auction Data Web Scarping -
-
-Run create_auction_data() in wsBids.py
-```
-python -c 'import wsBids; wsBids.create_auction_data()'
-```
-
-Source Code for analysis -
-
-- Run any python files from within `src/` folder
-
-```
-src % python batsman_stats.py
-```
+- Install all required libraries using conda
+- Run the streamlit app for live interactive UI using the command: streamlit run ./streamlit_app.py. Please ensure you are in the src directry when you run this command.
 
 Jupyter Notebook -
 
@@ -149,7 +106,5 @@ Jupyter Notebook -
 
 ## Presentation
 
-Final Presentation - [Link to Presentation](/Presentation/Final_Presentation.pdf)
+Final Presentation - [Link to Presentation](https://docs.google.com/presentation/d/1uyYdID_O2hJ5Uu_wthjF_jv1YBesf483JXhHCWh-K0Y/edit?usp=sharing)
 
-
-Explain your file structure, how to run your code, and name all third-party modules you are using.
