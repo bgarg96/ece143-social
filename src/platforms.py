@@ -60,7 +60,6 @@ class Social:
         df: pd.DataFrame = pd.concat([dfs[mnth]
                                      for mnth in MONTHS], ignore_index=True)
         df['Month'] = df['Month'].astype(MONTHS_DTYPE)
-        print(f"A Data Frame of shape {df.shape} formed!!")
         return df
 
     def get_influencer_fromdf(self, df):
