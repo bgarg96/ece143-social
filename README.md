@@ -76,7 +76,7 @@ The src directory has all the source code:
 
 ### Jupyter Notebook
 
-The [Jupyter Notebook](src/platforms.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
+The [Jupyter Notebook](src/plot_support_book.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
 
 ## Third Party Modules
 
