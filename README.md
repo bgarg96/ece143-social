@@ -19,6 +19,41 @@ Social media and influencing is $15B market.
 
 
 ## Repository Structure
+      root
+         │
+         ├───data
+         │   ├───Instagram
+         │   │       Instagram_Dec.csv
+         │   │       Instagram_Nov.csv
+         │   │       Instagram_Oct.csv
+         │   │       Instagram_Sep.csv
+         │   │
+         │   ├───TikTok
+         │   │       TikTok_Dec.csv
+         │   │       TikTok_Nov.csv
+         │   │       TikTok_Oct.csv
+         │   │       TikTok_Sep.csv
+         │   │
+         │   └───Youtube
+         │           Youtube_Dec.csv
+         │           Youtube_Nov.csv
+         │           Youtube_Oct.csv
+         │           Youtube_Sep.csv
+         │
+         ├───docs
+         │      action_items.txt
+         │   
+         │   
+         ├───scripts
+         │       lint.sh
+         │
+         └───src
+               config.py
+               data_visualization.py
+               platforms.py
+               streamlit_app.py
+               uts.py
+               
 
 ### Datasets
 
