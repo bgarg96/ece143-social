@@ -47,6 +47,7 @@ In this project we plan to do an exploratory data analysis of statistics of rece
          └───src
                config.py
                data_visualization.py
+               platforms.ipynb
                platforms.py
                streamlit_app.py
                uts.py
@@ -75,7 +76,7 @@ The src directory has all the source code:
 
 ### Jupyter Notebook
 
-The [Jupyter Notebook](src/plot_support_book.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
+The [Jupyter Notebook](src/platforms.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
 
 ## Third Party Modules
 
@@ -102,7 +103,7 @@ Make sure you are set up to use Python version - 3.9.6
 
 Jupyter Notebook -
 
-- Run compete notebook or particular cells of [`plot_support_book.ipynb`](src/plot_support_book.ipynb) for viewing the plots.
+- Run compete notebook or particular cells of [`platforms.ipynb`](src/platforms.ipynb) for viewing the plots.
 
 ## Presentation
 
