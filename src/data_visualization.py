@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from matplotlib_venn import venn2, venn2_circles
 
 from config import METRICS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
 from uts import weighted_average
@@ -81,62 +80,6 @@ def line_chart(df_medias_months: pd.DataFrame,
 
     figs.tight_layout(pad=100.0)
     return figs
-
-
-def venn_diagram(df_instagram: pd.DataFrame,
-                 df_youtube: pd.DataFrame,
-                 months: str = MONTHS[0],
-                 platform1="Instagram",
-                 platform2="Youtube") -> plt.figure():
-    '''
-    display venn diagram comparing and contrasting countries
-        for instagram and youtube
-    param:
-    df_instagram (type: pd.DataFrame) : UNFILTERED DataFrame of instagram data
-    df_youtube (type: pd.DataFrame) : UNFILTERED DataFrame of youtube data
-    month (type: string): month selected
-
-    output:
-    matplotlib_venn venn diagram
-    '''
-
-    df_filter = 'Country'
-    instagram_countries = df_instagram[df_filter].dropna().unique()
-    youtube_countries = df_youtube[df_filter].dropna().unique()
-
-    # determine common countries for middle of venn
-    common_countries = np.intersect1d(instagram_countries, youtube_countries)
-    insta_unique = len(instagram_countries) - len(common_countries)
-    assert insta_unique >= 0
-    youtube_unique = len(youtube_countries) - len(common_countries)
-    assert youtube_unique >= 0
-    figs = plt.figure()
-
-    def diff(list1, list2):
-        return list(set(list1).symmetric_difference(set(list2)))
-
-    df_countries = pd.DataFrame(
-        it.zip_longest(diff(instagram_countries, common_countries),
-                       diff(youtube_countries, common_countries),
-                       common_countries,
-                       fillvalue=""),
-        columns=[platform1, platform2, "Both"])
-
-    venn2(subsets=(insta_unique, youtube_unique,
-                   len(common_countries)),
-          set_labels=(platform1, platform2),
-          set_colors=('b', 'r'),
-          alpha=0.5)
-
-    venn2_circles(
-        subsets=(insta_unique,
-                 youtube_unique,
-                 len(common_countries)))
-
-    plt.title(
-        f"Instagram vs Youtube Number of Different Countries in {months} 2022")
-    return figs, df_countries
-
 
 def bar_InfluencersvFollowers(df_top_instagram,
                               df_top_youtube,
@@ -664,7 +607,6 @@ if __name__ == '__main__':
         '../data/Instagram/Instagram_Dec.csv')
     youtube = pd.read_csv(
         '../data/Youtube/Youtube_Dec.csv')
-    venn_diagram(instagram, youtube, 'Dec', 'Country').show()
     pie_chart(instagram, PLATFORMS[0], 'Dec',
               'Country', 'United States').show()
     platform = pt.Social('Instagram')

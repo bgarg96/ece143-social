@@ -223,37 +223,6 @@ if __name__ == '__main__':
                                top_n=optionNx)
         st.pyplot(fig_lc)
 
-    # example visualization 8 Line chart
-    st.subheader('Analysis of Influencer demograhics')
-    my_expander7 = st.expander(
-        label='Analysis of Influencer demograhics across platforms')
-    with my_expander7:
-
-        platform1 = st.selectbox(
-            'Select Platform 1: ', PLATFORMS, index=0)
-
-        platform2 = st.selectbox(
-            'Select Platform 2: ', PLATFORMS, index=1)
-
-        month_selection = st.selectbox(
-            'Select Month : ', MONTHS)
-
-        platform_1 = pt.Social(platform1)
-        platform_2 = pt.Social(platform2)
-
-        fig_venn, df_countries = dv.venn_diagram(
-            platform_1.df,
-            platform_2.df,
-            month_selection,
-            platform1,
-            platform2)
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig_venn)
-        with col2:
-            st.write("Countries on each social media platform")
-            st.write(df_countries)
-
     st.subheader(
         'Heatmap analysis of content consumption based on Category and Country ')  # noqa: E501
     my_expander9 = st.expander(
