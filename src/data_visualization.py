@@ -1,4 +1,5 @@
 import itertools as it
+import math
 import platform as pt
 import random
 
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib_venn import venn2, venn2_circles
 
 from config import METRICS, MONTHS, PLATFORMS, PRIMARY_KEY, TOP_N
 from uts import weighted_average
@@ -70,7 +72,9 @@ def line_chart(df_medias_months: pd.DataFrame,
         plt.ylabel('Number of ' + metric)
     plt.xticks(range(4), MONTHS)
     plt.yscale('log')
-    plt.legend(df_medias_weighted_subs[PRIMARY_KEY], loc='upper right')
+    plt.legend(df_medias_weighted_subs[PRIMARY_KEY], bbox_to_anchor=(
+        0.5, 1.3), loc='upper center',
+        ncol=len(df_medias_weighted_subs[PRIMARY_KEY].head()))
     if df_filter == '':
         plt.title('2022 ' + platform + " Top Influencers' " +
                   metric + ' in the World')
@@ -81,225 +85,60 @@ def line_chart(df_medias_months: pd.DataFrame,
     figs.tight_layout(pad=100.0)
     return figs
 
-def bar_InfluencersvFollowers(df_top_instagram,
-                              df_top_youtube,
-                              df_top_tiktok,
-                              requested_media='Instagram'):
+
+def venn_diagram(df_instagram: pd.DataFrame,
+                 df_youtube: pd.DataFrame,
+                 months: str = MONTHS[0],
+                 platform1="Instagram",
+                 platform2="Youtube") -> plt.figure():
     '''
-    display bar graph of top influencers and number of
-    followers/subscribers for given social media platform
+    display venn diagram comparing and contrasting countries
+        for instagram and youtube
     param:
-    df_top_instagram(type: pd.DataFrame): non-dated DataFrame of
-                    top influencers on instagram data
-    df_youtube(type: pd.DataFrame): non-dated DataFrame of
-                    top influencers on youtube data
-    df_tiktok(type: pd.DataFrame): non-dated DataFrame of
-                    top influencers on tiktok data
-    requested_media(type: string): which social media
-                    platform's information to display
+    df_instagram (type: pd.DataFrame) : UNFILTERED DataFrame of instagram data
+    df_youtube (type: pd.DataFrame) : UNFILTERED DataFrame of youtube data
+    month (type: string): month selected
 
     output:
-    matplotlib bar chart
+    matplotlib_venn venn diagram
     '''
-    assert isinstance(df_top_instagram, pd.DataFrame)
-    assert isinstance(df_top_youtube, pd.DataFrame)
-    assert isinstance(df_top_tiktok, pd.DataFrame)
-    assert isinstance(requested_media, str)
-    platform_options = ['Instagram', 'TikTok', 'Youtube']
-    all_dfs = [df_top_instagram, df_top_tiktok, df_top_youtube]
-    if '&' in requested_media:
-        and_idx = requested_media.index('&')
-        first_media = requested_media[0:and_idx-1]
-        second_media = requested_media[and_idx+2:]
-        all_dfs = [all_dfs[platform_options.index(
-            i)] for i in platform_options
-            if i == first_media or i == second_media]
-        platform_options = [
-            i for i in platform_options
-            if i == first_media or i == second_media]
-    elif requested_media != 'All':
-        all_dfs = [all_dfs[platform_options.index(requested_media)]]
-        platform_options = [requested_media]
-    fig_count = 0
-    figs = {}
-    for platform in platform_options:
-        figs[fig_count] = plt.figure(fig_count)
-        df_platform = all_dfs[fig_count][
-            ['Influencer name', 'Subscribers']]\
-            .sort_values(
-            by='Subscribers',
-            ascending=False)
-        influencer_names = df_platform['Influencer name'].values
-        subscribers = df_platform['Subscribers'].values
-        plt.bar(influencer_names, subscribers)
-        plt.title('Total Followers/Subscribers for Top Influencers on ' +
-                  platform + ' in 2022', loc='center', fontsize=12)
-        plt.xlabel('Top ' + platform + ' Influencers')
-        fig_count += 1
-    return figs
 
+    df_filter = 'Country'
+    instagram_countries = df_instagram[df_filter].dropna().unique()
+    youtube_countries = df_youtube[df_filter].dropna().unique()
 
-def bar_CountryvInfluencers(df_instagram: pd.DataFrame,
-                            df_youtube: pd.DataFrame,
-                            requested_media: str = 'Instagram'):
-    '''
-    display bar graph of number of influencers in
-    each country for given social media platform
-    param:
-    df_instagram: non-dated DF of influencers on instagram data
-    df_youtube: non-dated DF of influencers on youtube data
-    requested_media: which social media platform's information to display
+    # determine common countries for middle of venn
+    common_countries = np.intersect1d(instagram_countries, youtube_countries)
+    insta_unique = len(instagram_countries) - len(common_countries)
+    assert insta_unique >= 0
+    youtube_unique = len(youtube_countries) - len(common_countries)
+    assert youtube_unique >= 0
+    figs = plt.figure()
 
-    output:
-    matplotlib bar chart
-    '''
-    assert isinstance(df_instagram, pd.DataFrame)
-    assert isinstance(df_youtube, pd.DataFrame)
-    assert isinstance(requested_media, str)
-    platform_options = ['Instagram', 'Youtube']
-    all_dfs = [df_instagram, df_youtube]
-    if requested_media == 'All':
-        new_df = pd.DataFrame()
-        num = 0
-        for platform in platform_options:
-            ref_df = pd.DataFrame()
-            df_platform = all_dfs[num][['Influencer name', 'Audience country']]
-            country_count = df_platform['Audience country'].value_counts()
-            country_names = country_count.index
-            num_influencers = country_count.values
-            ref_df['Number of Influencers'] = num_influencers
-            ref_df['Country'] = country_names
-            ref_df['Social Media'] = [platform]*len(country_names)
-            new_df = pd.concat([new_df, ref_df])
-            num += 1
-        figs = plt.figure()
-        new_df.pivot(index='Social Media', columns='Country',
-                     values='Number of Influencers')\
-            .plot\
-            .bar(rot=0, stacked=True)
-        plt.title('Number of Influencers in a Demographic on ' +
-                  platform_options[0] + ' and ' + platform_options[1])
-    else:
-        all_dfs = all_dfs[platform_options.index(requested_media)]
-        df_platform = all_dfs[['Influencer name', 'Audience country']]
-        country_count = df_platform['Audience country'].value_counts()
-        country_names = country_count.index
-        num_influencers = country_count.values
-        figs = plt.figure()
-        plt.bar(country_names, num_influencers)
-        plt.title('Number of Influencers in Each Demographic on ' +
-                  platform + ' in 2022', loc='center', fontsize=12)
-        plt.xlabel('Audience Country')
-        plt.ylabel('Number of Influencers')
-    return figs
+    def diff(list1, list2):
+        return list(set(list1).symmetric_difference(set(list2)))
 
+    df_countries = pd.DataFrame(
+        it.zip_longest(diff(instagram_countries, common_countries),
+                       diff(youtube_countries, common_countries),
+                       common_countries,
+                       fillvalue=""),
+        columns=[platform1, platform2, "Both"])
 
-def bar_CategoryvViews(df_instagram: pd.DataFrame,
-                       df_youtube: pd.DataFrame,
-                       requested_media: str = 'Instagram'):
-    '''
-    display bar graph of number of views in each category
-            for given social media platform
-    param:
-    df_instagram: non-dated DataFrame of influencers on instagram data
-    df_youtube: non-dated DataFrame of influencers on youtube data
-    requested_media: which social media platform's information to display
+    venn2(subsets=(insta_unique, youtube_unique,
+                   len(common_countries)),
+          set_labels=(platform1, platform2),
+          set_colors=('b', 'r'),
+          alpha=0.5)
 
-    output:
-    matplotlib bar chart
-    '''
-    assert isinstance(df_instagram, pd.DataFrame)
-    assert isinstance(df_youtube, pd.DataFrame)
-    assert isinstance(requested_media, str)
-    platform_options = ['Instagram', 'Youtube']
-    all_dfs = [df_instagram, df_youtube]
-    if requested_media == 'All':
-        new_df = pd.DataFrame()
-        num = 0
-        for platform in platform_options:
-            ref_df = pd.DataFrame()
-            df_platform = all_dfs[num][['Category', 'avg views']]
-            sum_views = df_platform.groupby('Category')['avg views'].sum()
-            num_views = sum_views.values
-            category_names = sum_views.index
-            ref_df['Views'] = num_views
-            ref_df['Category'] = category_names
-            ref_df['Social Media'] = [platform]*len(category_names)
-            new_df = pd.concat([new_df, ref_df])
-            num += 1
-        figs = plt.figure()
-        new_df.pivot(index='Social Media', columns='Category',
-                     values='Views').plot.bar(rot=0, stacked=True)
-        plt.title('Number of Avg Views in a Product Category on ' +
-                  platform_options[0] + ' and ' + platform_options[1])
-    else:
-        all_dfs = all_dfs[platform_options.index(requested_media)]
-        df_platform = all_dfs[['Category', 'avg views']]
-        sum_views = df_platform.groupby('Category')['avg views'].sum()
-        num_views = sum_views.values
-        category_names = sum_views.index
-        figs = plt.figure()
-        plt.bar(category_names, num_views)
-        plt.title('Total Number of Views in Each Category on ' +
-                  requested_media + ' in 2022', loc='center', fontsize=12)
-        plt.xlabel('Category')
-        plt.ylabel('Views')
-    return figs
+    venn2_circles(
+        subsets=(insta_unique,
+                 youtube_unique,
+                 len(common_countries)))
 
-
-def bar_CategoryvInfluencers(df_instagram: pd.DataFrame,
-                             df_youtube: pd.DataFrame,
-                             requested_media: str = 'Instagram'):
-    '''
-    display bar graph of number of influencers in each category
-            for given social media platform
-    param:
-    df_instagram: non-dated DataFrame of influencers on instagram data
-    df_youtube: non-dated DataFrame of influencers on youtube data
-    requested_media: which social media platform's information to display
-
-    output:
-    matplotlib bar chart
-    '''
-    assert isinstance(df_instagram, pd.DataFrame)
-    assert isinstance(df_youtube, pd.DataFrame)
-    assert isinstance(requested_media, str)
-    platform_options = ['Instagram', 'Youtube']
-    all_dfs = [df_instagram, df_youtube]
-    if requested_media == 'All':
-        new_df = pd.DataFrame()
-        num = 0
-        for platform in platform_options:
-            ref_df = pd.DataFrame()
-            df_platform = all_dfs[num][['Influencer name', 'Category']]
-            category_count = df_platform['Category'].value_counts()
-            num_influencers = category_count.values
-            category_names = category_count.index
-            ref_df['Number of Influencers'] = num_influencers
-            ref_df['Category'] = category_names
-            ref_df['Social Media'] = [platform]*len(category_names)
-            new_df = pd.concat([new_df, ref_df])
-            num += 1
-        figs = plt.figure()
-        new_df.pivot(index='Social Media', columns='Category',
-                     values='Number of Influencers')\
-            .plot\
-            .bar(rot=0, stacked=True)
-        plt.title('Number of Influencers in a Product Category on ' +
-                  platform_options[0] + ' and ' + platform_options[1])
-    else:
-        all_dfs = all_dfs[platform_options.index(requested_media)]
-        df_platform = all_dfs[['Influencer name', 'Category']]
-        category_count = df_platform['Category'].value_counts()
-        num_influencers = category_count.values
-        category_names = category_count.index
-        figs = plt.figure()
-        plt.bar(category_names, num_influencers)
-        plt.title('Total Number of Influencers in Each Category on ' +
-                  requested_media + ' in 2022', loc='center', fontsize=12)
-        plt.xlabel('Category')
-        plt.ylabel('Number of Influencers')
-    return figs
+    plt.title(
+        f"Instagram vs Youtube Number of Different Countries in {months} 2022")
+    return figs, df_countries
 
 
 def heatmap(df_media: pd.DataFrame,
@@ -326,7 +165,6 @@ def heatmap(df_media: pd.DataFrame,
     labels = [[0 for _ in range(len(all_countries))]
               for _ in range(len(all_categories))]
     col = 0
-    figs = plt.figure(fig_count)
     for country in all_countries:
         df_vals = []
         row = 0
@@ -342,14 +180,17 @@ def heatmap(df_media: pd.DataFrame,
                 continue
             highest_following = df_filtered_category\
                 .loc[df_filtered_category['Subscribers'].idxmax()]
-            df_vals.append(highest_following['Subscribers'])
+            df_vals.append(math.log10(highest_following['Subscribers']))
             labels[row][col] = highest_following[PRIMARY_KEY]
             row += 1
         new_df[country] = df_vals
         col += 1
-    # TODO : get names to appear neatly on heatmap
-    sns.heatmap(new_df, fmt='')
-    plt.title(
+    ax = sns.heatmap(new_df, fmt='', cbar_kws={
+                     'label': 'log10'}, vmin=6, vmax=8)
+    c_bar = ax.collections[0].colorbar
+    c_bar.set_ticks([6, 6.7, 7, 7.5, 8])
+    c_bar.set_ticklabels(['< 6', '6.5', '7', '7.5', '> 8'])
+    ax.set_title(
         f"Content consumption based on Category and Country on {platform} in {month} 2022\n\n")  # noqa: E501
     return figs
 
@@ -447,39 +288,6 @@ def pie_chart(df_media: pd.DataFrame,
     return figs
 
 
-def bar_influencer_type(df_weighted: pd.DataFrame,
-                        platform: str = PLATFORMS[0],
-                        df_filter: str = 'United States') -> plt.figure():
-    figs = plt.figure()
-    df_medias = df_weighted['Subscribers_TW_averge']
-    type_of_influencers = ['Nano', 'Micro', 'Macro', 'Mega', 'Celebrities']
-    count_types = [0]*len(type_of_influencers)
-    for influencer_type in type_of_influencers:
-        if influencer_type == 'Nano':
-            count_types[type_of_influencers.index(
-                influencer_type)] = df_medias[df_medias <= 5000].count()
-        elif influencer_type == 'Micro':
-            count_types[type_of_influencers.index(influencer_type)] =\
-                df_medias[(
-                    df_medias > 5000) & (df_medias <= 20000)].count()
-        elif influencer_type == 'Macro':
-            count_types[type_of_influencers.index(influencer_type)] = \
-                df_medias[(
-                    df_medias > 20000) & (df_medias <= 100000)].count()
-        elif influencer_type == 'Mega':
-            count_types[type_of_influencers.index(influencer_type)] =\
-                df_medias[(
-                    df_medias > 100000) & (df_medias <= 1000000)].count()
-        else:
-            count_types[type_of_influencers.index(
-                influencer_type)] = df_medias[df_medias > 1000000].count()
-    plt.bar(type_of_influencers, count_types)
-    plt.title('Distribution of Types of Influencers by Number of Subscribers')
-    plt.xlabel('Types of Influencers')
-    plt.ylabel('Number of Subscribers')
-    return figs
-
-
 def bar_graph(df_media: pd.DataFrame,
               platform: str = PLATFORMS[0],
               month: str = MONTHS[0],
@@ -498,9 +306,6 @@ def bar_graph(df_media: pd.DataFrame,
     output:
     matplotlib bar chart
     '''
-
-    # TODO: Test the code
-    # TODO: Check permutations of filter and metric all graph
 
     figs = plt.figure()
     sum_dvar = df_media.groupby(df_filter)[metric].sum()
@@ -607,9 +412,9 @@ if __name__ == '__main__':
         '../data/Instagram/Instagram_Dec.csv')
     youtube = pd.read_csv(
         '../data/Youtube/Youtube_Dec.csv')
+    venn_diagram(instagram, youtube, 'Dec', 'Country').show()
     pie_chart(instagram, PLATFORMS[0], 'Dec',
               'Country', 'United States').show()
     platform = pt.Social('Instagram')
     df_medias_months = platform.load_dfs('Instagram')
     df_medias_weighted_subs = weighted_average(df_medias_months, 'Subscribers')
-    bar_influencer_type(df_medias_weighted_subs).show()
