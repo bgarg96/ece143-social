@@ -7,13 +7,14 @@
    - [Datasets](#Datasets)
    - [Source Code](#SourceCode)
    - [Jupyter Notebook](#JupyterNotebook)
+   - [Deploy app](#deploy-the-dashboard)
 3. [Third Party Modules](#ThirdPartymodules)
 4. [Implementation](#Implementation)
 5. [Presentation](#Presentation)
 
 ## Project Overview
 Our proposed problem statement is to assess the efficacy of social media influencers as a marketing medium for businesses. We propose to study, analyze and predict which social media platform is most effective for a particular business segment and which influencers provide the best marketing reach for a given type of product in a particular demographic.
-In this project we plan to do an exploratory data analysis of statistics of recent social media influencers, social media platforms and key attributes that help identify the best influencer, social media platform and type of content for a particular product to be marketed in a given demographic. We propose to analyze trends such as views, comments, likes on various social media platforms that can act as key indicators of the marketing reach of a particular influencer and predict the best influencer for various businesses. We will present visualizations into top influencers for a given demographic and type of product. 
+In this project we plan to do an exploratory data analysis of statistics of recent social media influencers, social media platforms and key attributes that help identify the best influencer, social media platform and type of content for a particular product to be marketed in a given demographic. We propose to analyze trends such as views, comments, likes on various social media platforms that can act as key indicators of the marketing reach of a particular influencer and predict the best influencer for various businesses. We will present visualizations into top influencers for a given demographic and type of product.
 
 ## Repository Structure
       root
@@ -39,8 +40,8 @@ In this project we plan to do an exploratory data analysis of statistics of rece
          │
          ├───docs
          │      action_items.txt
-         │   
-         │   
+         │
+         │
          ├───scripts
          │       lint.sh
          │
@@ -51,11 +52,11 @@ In this project we plan to do an exploratory data analysis of statistics of rece
                platforms.py
                streamlit_app.py
                uts.py
-               
+
 
 ### Datasets
 We use the following dataset: https://www.kaggle.com/datasets/ramjasmaurya/top-1000-social-media-channels.
-The dataset contains information regarding different social media platforms, the influencers on them, the type of content they promote, subscribers, viewer, comment and like count, demographic information. 
+The dataset contains information regarding different social media platforms, the influencers on them, the type of content they promote, subscribers, viewer, comment and like count, demographic information.
 
 The `data` folder contains:
 
@@ -77,6 +78,9 @@ The src directory has all the source code:
 ### Jupyter Notebook
 
 The [Jupyter Notebook](src/platforms.ipynb) has all the plotting code. All analyzed data is stored as one cell for easy reproducibility.
+
+### Deploy the dashboard
+Run `streamlit run src/streamlit_app.py` to deploy the dashboard.
 
 ## Third Party Modules
 
@@ -108,4 +112,3 @@ Jupyter Notebook -
 ## Presentation
 
 Final Presentation - [Link to Presentation](https://docs.google.com/presentation/d/1uyYdID_O2hJ5Uu_wthjF_jv1YBesf483JXhHCWh-K0Y/edit?usp=sharing)
-
