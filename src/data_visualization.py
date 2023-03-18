@@ -626,24 +626,3 @@ def venn_diagram(df_instagram: pd.DataFrame, df_youtube: pd.DataFrame, months: s
     venn2_circles(subsets=(insta_unique, youtube_unique, len(common_countries)))
     plt.title('Instagram vs Youtube Number of Different Countries in ' + months + ' 2022')
     return figs
-
-if __name__ == '__main__':
-    platform = pt.Social('Instagram')
-    df_medias_months = platform.load_dfs('Instagram')
-    df_medias_weighted_subs = weighted_average(df_medias_months, 'Subscribers')
-    instagram = pd.read_csv("../data/Instagram/Instagram_Dec.csv")
-    pie_chart(instagram,
-              PLATFORMS[0],
-              'Dec',
-              'Country',
-              'United States').show()
-    instagram = pd.read_csv(
-        '../data/Instagram/Instagram_Dec.csv')
-    youtube = pd.read_csv(
-        '../data/Youtube/Youtube_Dec.csv')
-    pie_chart(instagram, PLATFORMS[0], 'Dec',
-              'Country', 'United States').show()
-    platform = pt.Social('Instagram')
-    df_medias_months = platform.load_dfs('Instagram')
-    df_medias_weighted_subs = weighted_average(df_medias_months, 'Subscribers')
-    bar_influencer_type(df_medias_weighted_subs).show()
